@@ -1,0 +1,11 @@
+{% load static %}
+<script src="{% static 'base/css/base.css' %}"></script>
+
+<form method="get" action="{% url search_url %}" class="row mb-3">
+    <div class="col">
+      <input value="{{ request.GET.q }}" class="form-control" type="text" name="q" placeholder="Buscar" />
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn color-theme">Buscar</button>
+    </div>
+</form>

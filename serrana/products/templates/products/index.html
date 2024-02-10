@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Produtos
+{% endblock title %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+{% endblock head %}
+
+{% block content %}
+    <h2 class="mb-3">Produtos</h2>
+
+    <a href="{% url "products:create" %}" class="btn btn-sticky-bottom color-theme" title="Cadastrar novo produto">
+        <i class="bi bi-plus"></i>
+    </a>
+
+    {% include "partials/_search_filter.html" with search_url="products:search" %}
+
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Produto</th>
+                    <th>Bitola</th>
+                    <th>Peso</th>
+                    <th>Localização</th>
+                    <th>Quantidade</th>
+                    <th>Estoque Mínimo</th>
+                    <th>Estoque Máximo</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for product in page_obj %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.product_name | title | truncatechars:20 }}</td>
+                        <td>{{ product.product_diameter }}</td>
+                        <td>{{ product.product_weight }}</td>
+                        <td>{{ product.storage_location }}</td>
+                        <td>{{ product.product_quantity }}</td>
+                        <td>{{ product.min_stock_quantity }}</td>
+                        <td>{{ product.max_stock_quantity }}</td>
+                        <td>{{ product.product_status }}</td>
+                        <td class="d-flex gap-1">
+                            <a href="{% url 'products:update' product.slug %}" class="btn btn-warning btn-sm" title="editar produto"><i class="bi bi-pencil"></i></a>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center">Nenhum produto cadastrado.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% include "partials/_paginator.html" %}
+    </div>
+{% endblock content %}
+
