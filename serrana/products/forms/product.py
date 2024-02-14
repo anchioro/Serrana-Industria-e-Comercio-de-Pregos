@@ -12,6 +12,7 @@ class ProductForm(forms.ModelForm):
         
         labels = {
             "product_name": "Nome do produto",
+            "product_codebar": "Código de barras",
             "product_diameter": "Bitola do produto",
             "product_weight": "Peso da embalagem",
             "storage_location": "Localização no estoque",

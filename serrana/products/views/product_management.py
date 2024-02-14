@@ -31,8 +31,13 @@ class ProductSearchView(ListView):
         
         else:
             return Product.objects.all()
-    
-    
+
+class ProductInformationView(ListView):
+    model = Product
+    template_name = "products/history.html" 
+class ProductHistoryView(ListView):
+    model = Product
+    template_name = "products/history.html"    
 class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
