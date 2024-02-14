@@ -5,20 +5,16 @@ from django.utils.text import slugify
 # Create your models here.
 class Product(models.Model):
     product_name = models.CharField(max_length=255)
+    product_codebar = models.CharField(max_length=13, unique=True)
     slug = models.CharField(max_length=255, blank=True)
     product_diameter = models.CharField(max_length=255)
     product_weight = models.CharField(max_length=255)
     storage_location = models.CharField(max_length=255, unique=True)
     location_description = models.TextField(blank=True, null=True)
-    product_quantity = models.IntegerField(blank=True, null=True)
+    product_quantity = models.IntegerField(validators=[MinValueValidator(0)])
     min_stock_quantity = models.IntegerField(blank=True, null=True)
     max_stock_quantity = models.IntegerField(blank=True, null=True)
     product_status = models.CharField(max_length=255, blank=True)
-    
-    searchable_fields = [
-        "product_name",
-        "product_status",
-    ]
     
     def __str__(self):
         return self.searchable_fields
@@ -47,8 +43,6 @@ class Product(models.Model):
         else:
             self.product_status = "Com estoque"
         
-        
-    
     def save(self, *args, **kwargs):
         slug_text = f"{self.product_name} {self.storage_location}"
         self.slug = slugify(slug_text)
@@ -59,7 +53,9 @@ class Product(models.Model):
         self._get_stock_status()
         
         super(Product, self).save(*args, **kwargs)
-        
+    
+    def delete(self, *args, **kwargs):
+        super(Product, self).delete(*args, **kwargs)
     class Meta:
         verbose_name = "Produto"
         verbose_name_plural = "Produtos"

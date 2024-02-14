@@ -38,7 +38,10 @@
                 {% for product in page_obj %}
                     <tr>
                         <td>{{ product.id }}</td>
-                        <td>{{ product.product_name | title | truncatechars:20 }}</td>
+                        <td>
+                            
+                            <a href="{% url "products:information" product.slug %}" class="link-dark link-offset-2 link-underline link-underline-opacity-0" title="informação produto">{{ product.product_name | title | truncatechars:20 }}</a>
+                        </td>
                         <td>{{ product.product_diameter }}</td>
                         <td>{{ product.product_weight }}</td>
                         <td>{{ product.storage_location }}</td>
@@ -47,8 +50,16 @@
                         <td>{{ product.max_stock_quantity }}</td>
                         <td>{{ product.product_status }}</td>
                         <td class="d-flex gap-1">
-                            <a href="{% url 'products:update' product.slug %}" class="btn btn-warning btn-sm" title="editar produto"><i class="bi bi-pencil"></i></a>
-                        </td>
+                            {% comment %} Delete {% endcomment %}
+                            <form method="post" action="{% url "products:delete" product.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger btn-sm" title="remover produto"><i class="bi bi-trash"></i></button>
+                            </form>
+                            {% comment %} Update {% endcomment %}
+                            <a href="{% url "products:update" product.slug %}" class="btn btn-warning btn-sm" title="editar produto"><i class="bi bi-pencil"></i></a>
+                            {% comment %} Historic {% endcomment %}
+                            <a href="{% url "products:history" product.slug %}" style="width:50px" class="btn btn-primary btn-sm" title="histórico produto"><i class="bi bi-arrow-right"></i></a>
+                          </td>
                     </tr>
 
                     {% empty %}
