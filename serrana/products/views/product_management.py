@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.contrib import messages
 from products.models.product import Product
 from products.forms.product import ProductForm
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.db import transaction, IntegrityError
 
@@ -32,9 +32,21 @@ class ProductSearchView(ListView):
         else:
             return Product.objects.all()
 
-class ProductInformationView(ListView):
+class ProductInformationView(DetailView):
     model = Product
-    template_name = "products/history.html" 
+    template_name = "products/information.html"
+    context_object_name = "product"
+    slug_field = "slug"
+
+    def get_queryset(self):
+        return Product.objects.filter(slug=self.kwargs["slug"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        context["product"] = product
+        return context
+    
 class ProductHistoryView(ListView):
     model = Product
     template_name = "products/history.html"    

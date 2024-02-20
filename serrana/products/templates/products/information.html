@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    {{ product.product_name }}
+{% endblock title %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+{% endblock head %}
+
+{% block content %}
+    <h2 class="mb-3">
+        <a href="{% url "products:index" %} " class="link-dark link-offset-2 link-underline link-underline-opacity-0">Produtos</a>
+         / {{ product.product_name }}
+    </h2>
+
+    <hr>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h4>Informações gerais</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Nome:</span>
+                        {{ product.product_name }}
+                    </div>
+            
+                    <div class="list-group-item">
+                        <span class="fw-bold">Bitola:</span>
+                        {{ product.product_diameter }}
+                    </div>
+            
+                    <div class="list-group-item">
+                        <span class="fw-bold">Embalagem:</span>
+                        {{ product.product_weight }}
+                    </div>            
+                </div>
+            </div>
+        </div>
+    
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Localização Física</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Localização:</span>
+                        {{ product.storage_location }}
+                    </div>
+                    <div class="list-group-item">
+                        <span class="fw-bold">Descrição:</span>
+                        {{ product.location_description }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Estoque</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Quantidade de Produtos:</span>
+                        {{ product.product_quantity }}
+                    </div>
+                    <div class="list-group-item">
+                        <span class="fw-bold">Estoque Mínimo:</span>
+                        {{ product.min_stock_quantity }}
+                    </div>
+            
+                    <div class="list-group-item">
+                        <span class="fw-bold">Estoque Máximo:</span>
+                        {{ product.max_stock_quantity }}
+                    </div>
+                    <div class="list-group-item">
+                        <span class="fw-bold">Status do Produto:</span>
+                        {{ product.product_status }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+{% endblock content %}
