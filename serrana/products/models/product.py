@@ -52,7 +52,7 @@ class Product(models.Model):
         
         self._get_stock_status()
         
-        super(Product, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
         super(Product, self).delete(*args, **kwargs)
