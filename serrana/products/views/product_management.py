@@ -47,9 +47,20 @@ class ProductInformationView(DetailView):
         context["product"] = product
         return context
     
-class ProductHistoryView(ListView):
+class ProductHistoryView(DetailView):
     model = Product
-    template_name = "products/history.html"    
+    template_name = "products/history.html"   
+    context_object_name = "product"
+    slug_field = "slug"
+    
+    def get_queryset(self):
+        return Product.objects.filter(slug=self.kwargs["slug"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        context["product"] = product
+        return context
 class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
