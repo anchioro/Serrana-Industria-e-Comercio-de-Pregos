@@ -7,58 +7,152 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serrana - {% block title %}{% endblock title %}</title>
 
+    <link rel="icon" type="img/ico" href="{% static "base/img/favicon.ico" %}">
+
     {% comment %} Load CSS {% endcomment %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'base/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'base/css/base.css' %}">
+    <link rel="stylesheet" href="{% static "base/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "base/css/base.css" %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
     {% comment %} Load JS {% endcomment %}
-    <script src="{% static 'base/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'base/js/jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static 'base/js/base.js' %}"></script>
+    <script src="{% static "base/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "base/js/jquery-3.7.1.min.js" %}"></script>
+    <script src="{% static "base/js/base.js" %}"></script>
+    <script src="{% static "base/js/index.js" %}"></script>
 
-    {% block head %}{% endblock head %}
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <nav class="col-md-3 col-lg-2 d-none d-md-flex flex-column bg-light sidebar flex-shrink-0 p-3">
+    <nav class="navbar navbar-expand-lg d-lg-none bg-light">
+        <div class="container-fluid">
+            <a href="{% url "home" %}" class="link-dark link-offset-2 link-underline link-underline-opacity-0">
                 <div class="d-flex justify-content-center align-items-center">
                     <img src="{% static "base/img/icon.png" %}" alt="Logo do site">
                     <div class="d-block">
-                        <h1 class="fs-2 px-2 m-0 font-logo">Serrana</h1>
-                        <span class="px-2 m-0 font-sub-logo">Indústria e Comércio de Pregos</span>
+                        <h1 class="fs-2 px-2 m-0 font-logo-d-lg-none">Serrana</h1>
                     </div>
                 </div>
-
+            </a>
+            <button class="navbar-toggler bg-light bg-opacity-25" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse bg-light" id="navbarNav">
                 <hr>
-
-                <ul class="nav nav-pills flex-column flex-grow-1 ">
+                <ul class="nav nav-pills flex-column flex-grow-1">
                     <li>
                         <a href="{% url "products:index" %}" class="nav-link link-dark">
                             <i class="bi bi-grid"></i>
                             Produtos
                         </a>
                     </li>
+                    <li>
+                        <a href="{% url "users:index" %}" class="nav-link link-dark">
+                            <i class="bi bi-people"></i>
+                            Usuários
+                        </a>
+                    </li>
                 </ul>
-
                 <hr>
-                <ul class="nav nav-pills">
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link link-dark">
-                            <i class="bi bi-box-arrow-left"></i>
-                            Sair
-                        </button>
-                    </form>
+                <ul class="nav nav-pills d-flex justify-content-between  align-items-center">
+                    <li>
+                        <form action="{% url "users:logout" %}" method="post">
+                            {% csrf_token %}
+                            {% if request.user.is_authenticated %}
+                                <button type="submit" class="nav-link link-dark">
+                                    <i class="bi bi-box-arrow-left"></i>
+                                    Sair
+                                </button>
+                            {% else %}
+                                <button type="submit" class="nav-link link-dark">
+                                    Entrar
+                                    <i class="bi bi-box-arrow-right"></i>
+                                </button>
+                            {% endif %}
+                        </form>
+                    </li>
+                    <li>
+                        {% if request.user.is_authenticated %}
+                                {{ request.user.get_full_name }}
+                                <i class="bi bi-person-circle"></i>
+                        {% else %}
+                            Visitante
+                            <i class="bi bi-person-circle"></i>
+                        {% endif %}
+                    </li>
                 </ul>
-            </nav>
+          </div>
+        </div>
+      </nav>
 
-            <main class="col-md-9 col-lg-10 ml-sm-auto p-md-4 overflow-auto">
+    <div class="container-fluid">
+        <div class="row">
+            {% if request.path != "/login/" %}
+                <nav class="col-xxl-2 col-lg-3 col-md-2 d-none d-lg-flex flex-column bg-light sidebar flex-shrink-0 p-3">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <a href="{% url "home" %}" class="link-dark link-offset-2 link-underline link-underline-opacity-0">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <img src="{% static "base/img/icon.png" %}" alt="Logo do site">
+                                <div class="d-block">
+                                    <h1 class="fs-2 px-2 m-0 font-logo">Serrana</h1>
+                                    <span class="px-2 m-0 font-sub-logo">Indústria e Comércio de Pregos</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <hr>
+
+                    <ul class="nav nav-pills flex-column flex-grow-1 ">
+                        <li>
+                            <a href="{% url "products:index" %}" class="nav-link link-dark">
+                                <i class="bi bi-grid"></i>
+                                Produtos
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "users:index" %}" class="nav-link link-dark">
+                                <i class="bi bi-people"></i>
+                                Usuários
+                            </a>
+                        </li>
+                    </ul>
+
+                    <hr>
+                    <ul class="nav nav-pills d-flex justify-content-between  align-items-center">
+                        <li>
+                            <form action="{% url "users:logout" %}" method="post">
+                                {% csrf_token %}
+                                {% if request.user.is_authenticated %}
+                                    <button type="submit" class="nav-link link-dark">
+                                        <i class="bi bi-box-arrow-left"></i>
+                                        Sair
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="nav-link link-dark">
+                                        Entrar
+                                        <i class="bi bi-box-arrow-right"></i>
+                                    </button>
+                                {% endif %}
+                            </form>
+                        </li>
+                        <li>
+                            {% if request.user.is_authenticated %}
+                                {{ request.user.get_full_name }}
+                                <i class="bi bi-person-circle"></i>
+                            {% else %}
+                                Visitante
+                                <i class="bi bi-person-circle"></i>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </nav>
+            {% endif %}
+            
+            <main class="col-md col-lg ml-sm-auto p-md-4 overflow-auto">
                 <div class="container mt-4">{% block content %}{% endblock content %}</div>
             </main>
         </div>
