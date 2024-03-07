@@ -9,6 +9,13 @@ main {
     text-transform: uppercase;
 }
 
+.font-logo-d-lg-none {
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    text-transform: uppercase;
+}
+
 .font-sub-logo {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 400;
@@ -22,13 +29,16 @@ main {
     right: 16px;
 }
 
-
 .bi-plus {
     font-size: 24px;
     color: black;
 }
 
 .color-theme {
+    background-color: #F8DF00;
+}
+
+.color-theme-d-lg-none {
     background-color: #F8DF00;
 }
 

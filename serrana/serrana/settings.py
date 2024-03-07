@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'products.apps.ProductsConfig',
+    'users.apps.UsersConfig',
     'crispy_forms',
     'crispy_bootstrap5',
 ]
@@ -135,3 +136,9 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Cookies session ID
+SESSION_COOKIE_AGE = 43200
+
+# Login URL
+LOGIN_URL = '/login/'

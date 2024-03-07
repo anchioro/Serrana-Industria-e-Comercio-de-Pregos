@@ -1,20 +1,20 @@
 from django.db.models import Q
-from django.contrib import messages
 from products.models.product import Product
 from products.forms.product import ProductForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
-from django.db import transaction, IntegrityError
+from django.db import transaction
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     paginate_by = 100
     template_name = "products/index.html"
     ordering = "-id"
     
-class ProductSearchView(ListView):
+class ProductSearchView(LoginRequiredMixin, ListView):
     model = Product
     paginate_by = 100
     template_name = "products/index.html"
@@ -26,13 +26,16 @@ class ProductSearchView(ListView):
         if search_value:
             return Product.objects.filter(
                 Q(product_name__icontains=search_value) |
+                Q(product_diameter__icontains=search_value) |
+                Q(product_weight__icontains=search_value) |
+                Q(product_quantity__icontains=search_value) | 
                 Q(product_status__icontains=search_value)
             ).order_by("-id")
         
         else:
             return Product.objects.all()
 
-class ProductInformationView(DetailView):
+class ProductInformationView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = "products/information.html"
     context_object_name = "product"
@@ -47,7 +50,7 @@ class ProductInformationView(DetailView):
         context["product"] = product
         return context
     
-class ProductHistoryView(DetailView):
+class ProductHistoryView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = "products/history.html"   
     context_object_name = "product"
@@ -61,7 +64,7 @@ class ProductHistoryView(DetailView):
         product = self.get_object()
         context["product"] = product
         return context
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = "products/create.html"
@@ -70,7 +73,7 @@ class ProductCreateView(CreateView):
     def form_valid(self, form):
         return super().form_valid(form)
     
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = "products/update.html"
@@ -82,12 +85,10 @@ class ProductUpdateView(UpdateView):
             
             if form.is_valid():
                 form.save()
-                messages.success(self.request, "Produto atualizado com sucesso!")
                 return response
             else:
-                messages.error(self.request, "Falha ao atualizar o produto.")
                 return self.form_invalid(form)
     
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy("products:index")
