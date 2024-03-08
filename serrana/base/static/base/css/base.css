@@ -35,13 +35,13 @@ main {
 }
 
 .color-theme {
-    background-color: #F8DF00;
+    background-color: #ffeb3b;
 }
 
 .color-theme-d-lg-none {
-    background-color: #F8DF00;
+    background-color: #ffeb3b;
 }
 
 .color-theme:hover {
-    background-color: #c0ad02;
+    background-color: #f8d640;
 }
