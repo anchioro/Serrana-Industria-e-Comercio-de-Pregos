@@ -11,10 +11,12 @@
 {% block content %}
     <h2 class="mb-3">Usuários</h2>
 
+    {% if request.user.is_staff %}
     <a href="{% url "users:create" %}" class="btn btn-sticky-bottom color-theme" title="Cadastrar novo usuário">
         <i class="bi bi-plus"></i>
     </a>
-
+    {% endif %}
+    
     {% include "partials/_search_filter.html" with search_url="users:search" %}
 
     <div class="table-responsive">
