@@ -5,6 +5,7 @@ from django.core.validators import validate_email
 
 
 class UserForm(forms.ModelForm):
+    confirm_password = forms.CharField(label="Confirmar Senha", widget=forms.PasswordInput)
     class Meta:
         model = User
         fields = ["first_name", "last_name", "username", "password", "is_active"]
@@ -19,12 +20,17 @@ class UserForm(forms.ModelForm):
         
         if self.instance and not self.instance._state.adding:
             self.fields["password"].required = False
+            if "password" in self.data and self.data["password"] and not self.data["confirm_password"]:
+                self.fields["confirm_password"].required = True
+            else:
+                self.fields["confirm_password"].required = False
         
     def save(self):
         password = self.cleaned_data.get("password")
+        confirm_password = self.cleaned_data.get("confirm_password")
         user = super().save(commit=False)
         
-        if password:
+        if password and password == confirm_password:
             user.set_password(password)
             user.save()
 
@@ -44,5 +50,13 @@ class UserForm(forms.ModelForm):
             validate_email(username)
         except ValidationError:
             self.add_error("username", ValidationError("O usuário deve conter um endereço de e-mail válido."))
+        
+        password = self.cleaned_data.get("password")
+        confirm_password = self.cleaned_data.get("confirm_password")
+        
+        if password != confirm_password:
+            self.add_error("password", ValidationError("As senhas não coincidem."))
+            self.add_error("confirm_password", ValidationError("As senhas não coincidem."))
+        
         
         return super().clean()

@@ -10,8 +10,36 @@
       {% include "partials/_form_non_field_errors.html" %}
       {% csrf_token %}
 
-      {{form|crispy}}
+      {{ form.first_name|as_crispy_field }}
+      {{ form.last_name|as_crispy_field }}
+      {{ form.username|as_crispy_field }}
+
+      <p class="d-inline-flex gap-1">
+        <button class="btn color-theme" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
+          Alterar a senha
+        </button>
+      </p>
+      <div class="collapse" id="collapsePassword">
+        <div class="row mb-3">
+          {{ form.password|as_crispy_field }}
+        </div>
+        <div class="row mb-3">
+          <div class="mb-3">
+            {{ form.confirm_password|as_crispy_field }}
+          </div>
+        </div>
+      </div>
+
+      {{ form.is_active|as_crispy_field }}
 
       {% include "partials/_submit_button.html" %}
     </form>
+
+    <script>
+      const errorsExists = {% if form.errors.password %} true {% elif form.errors.confirm_password %} true {% else %} false {% endif %};
+
+      if (errorsExists) {
+        $("#collapsePassword").addClass("show");
+    }
+    </script>
 {% endblock %}
