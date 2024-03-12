@@ -42,8 +42,7 @@ class UserSearchView(LoginRequiredMixin, ListView):
             return User.objects.filter(
                 Q(first_name__icontains=search_value) |
                 Q(last_name__icontains=search_value) |
-                Q(username__icontains=search_value) |
-                Q(is_active__icontains=search_value)
+                Q(username__icontains=search_value)
                 ).order_by("-id")
         else:
             return User.objects.all()

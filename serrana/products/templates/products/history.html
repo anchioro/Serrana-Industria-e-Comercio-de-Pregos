@@ -62,9 +62,9 @@
                     <tbody>
                         <tr>
                             <td>Criação</td>
-                            <td>02/03/2024</td>
-                            <td>10:33</td>
-                            <td>Mateus W. Hennich</td>
+                            <td>{{ product.created_at|date:"d/m/Y" }}</td>
+                            <td>{{ product.created_at|time:"H:i" }}</td>
+                            <td>{{ user.get_full_name }}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -7,7 +7,8 @@ class ProductForm(forms.ModelForm):
         model = Product
         
         exclude = [
-            "slug"
+            "slug",
+            "created_at"
         ]
         
         labels = {

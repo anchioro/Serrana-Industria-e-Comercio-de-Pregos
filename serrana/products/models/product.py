@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.utils import timezone
 from django.utils.text import slugify
 
 # Create your models here.
@@ -15,6 +16,7 @@ class Product(models.Model):
     min_stock_quantity = models.IntegerField(blank=True, null=True)
     max_stock_quantity = models.IntegerField(blank=True, null=True)
     product_status = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField()
     
     def __str__(self):
         return self.searchable_fields
@@ -46,6 +48,9 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         slug_text = f"{self.product_name} {self.storage_location}"
         self.slug = slugify(slug_text)
+        
+        if not self.pk:
+            self.created_at = timezone.now()
         
         self._set_min_stock_value()
         self._set_max_stock_value()
