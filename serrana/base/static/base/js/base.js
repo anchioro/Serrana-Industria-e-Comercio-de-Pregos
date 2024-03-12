@@ -1,9 +1,16 @@
-jQuery(function() {
+$(document).ready(function() {
     const currentLocation = location.pathname;
     const $menuItems = $(".nav-link");
     const $logoText = $(".font-logo");
     const $logoSubText = $(".font-sub-logo");
+    const $clearButton = $("#clear-button");
+    const $searchField = $("#search-field");
     
+    $clearButton.click(function() {
+        $searchField.val("");
+        $searchField.focus();
+    });
+
     var $lastLocation = $logoText.offset();
 
     const checkLocation = function() {
