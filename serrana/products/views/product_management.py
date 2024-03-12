@@ -92,7 +92,9 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("products:index")
     
     def form_valid(self, form):
+        form.instance.created_by = self.request.user
         return super().form_valid(form)
+    
     
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}
     {{ product.product_name }}
 {% endblock title %}
@@ -55,16 +56,15 @@
                             <th>Data</th>
                             <th>Hora</th>
                             <th>Responsável</th>
-                            <th></th>
                         </tr>
                     </thead>
 
                     <tbody>
                         <tr>
-                            <td>Criação</td>
+                            <td>Criação do Produto</td>
                             <td>{{ product.created_at|date:"d/m/Y" }}</td>
                             <td>{{ product.created_at|time:"H:i" }}</td>
-                            <td>{{ user.get_full_name }}</td>
+                            <td>{{ product.created_by|get_full_name_from_username }}</td>
                         </tr>
                     </tbody>
                 </table>
