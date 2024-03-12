@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.urls import reverse_lazy
 from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
+from re import match
 
 
 # Create your views here.
@@ -24,13 +25,33 @@ class ProductSearchView(LoginRequiredMixin, ListView):
         search_value = self.request.GET.get("q").strip()
         
         if search_value:
-            return Product.objects.filter(
-                Q(product_name__icontains=search_value) |
-                Q(product_diameter__icontains=search_value) |
-                Q(product_weight__icontains=search_value) |
-                Q(product_quantity__icontains=search_value) | 
-                Q(product_status__icontains=search_value)
-            ).order_by("-id")
+            search_terms = search_value.split()
+            
+            name_query = Q()
+            diameter_query = Q()
+
+            for term in search_terms:
+                term = term.lower()
+                if match(r"^\d*(x\d*)?\s?(g|kg|unidades|uni)?$", term):
+                    diameter_query |= Q(product_diameter__icontains=term) | Q(product_weight__icontains=term)
+                else:
+                    name_query &= Q(product_name__icontains=term)
+               
+            combined_query = name_query & diameter_query
+            
+            results = Product.objects.filter(combined_query).order_by("-id")
+            
+            if not results:
+                return Product.objects.filter(
+                    Q(product_name__icontains=search_value) |
+                    Q(product_diameter__icontains=search_value) |
+                    Q(product_weight__icontains=search_value) |
+                    Q(product_quantity__icontains=search_value) | 
+                    Q(storage_location__icontains=search_value) |
+                    Q(product_status__icontains=search_value)
+                ).order_by("-id")
+            
+            return results
         
         else:
             return Product.objects.all()
