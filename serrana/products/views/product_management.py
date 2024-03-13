@@ -1,6 +1,9 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from products.models.product import Product
 from products.forms.product import ProductForm
+from products.models.product import ProductAction
+from products.forms.action import ActionForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.db import transaction
@@ -71,20 +74,22 @@ class ProductInformationView(LoginRequiredMixin, DetailView):
         context["product"] = product
         return context
     
-class ProductHistoryView(LoginRequiredMixin, DetailView):
-    model = Product
-    template_name = "products/history.html"   
-    context_object_name = "product"
-    slug_field = "slug"
-    
-    def get_queryset(self):
-        return Product.objects.filter(slug=self.kwargs["slug"])
+class ProductHistoryView(LoginRequiredMixin, ListView):
+    model = ProductAction
+    paginate_by = 25
+    template_name = "products/history.html"
+    context_object_name = "product_actions"
 
+    def get_queryset(self):
+        return ProductAction.objects.filter(product__slug=self.kwargs["slug"]).order_by("-created_at")
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product = self.get_object()
+        product = get_object_or_404(Product, slug=self.kwargs["slug"])
         context["product"] = product
         return context
+
+
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
@@ -95,6 +100,30 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
     
+class ProductActionView(LoginRequiredMixin, CreateView):
+    model = ProductAction
+    form_class = ActionForm
+    template_name = "actions/action.html"
+    
+    def form_valid(self, form):
+        product = get_object_or_404(Product, slug=self.kwargs["slug"])
+        
+        form.instance.product = product
+        form.instance.created_by = self.request.user
+        
+        return super().form_valid(form)
+    
+    def get_queryset(self):
+        return Product.objects.filter(slug=self.kwargs["slug"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        context["product"] = product
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy("products:history", kwargs={'slug': self.kwargs["slug"]})
     
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product

@@ -62,9 +62,43 @@ class Product(models.Model):
         
         super().save(*args, **kwargs)
     
+    def modify_quantity(self, quantity_change):
+        self.product_quantity += quantity_change
+        self.save(update_fields=["product_quantity"])
+    
     def delete(self, *args, **kwargs):
         super(Product, self).delete(*args, **kwargs)
     class Meta:
         verbose_name = "Produto"
         verbose_name_plural = "Produtos"
     
+class ProductAction(models.Model):
+    ACTION_CHOICES = (
+        ("entry", "Entrada"),
+        ("exit", "Saída"),
+    )
+    
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    action = models.CharField(max_length=10, choices=ACTION_CHOICES)
+    quantity = models.IntegerField(default=0, validators=[MinValueValidator(1)])
+    invoice = models.IntegerField(unique=True)
+    unit = models. CharField(max_length=10, blank=True, null=True)
+    created_at = models.DateTimeField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    
+    def save(self, *args, **kwargs):
+        self.created_at = timezone.now()
+        if "request" in kwargs:
+            self.created_by = kwargs["request"].user
+        
+        if self.action == "entry":
+            self.product.modify_quantity(self.quantity)
+        elif self.action == "exit" and not self.quantity > self.product.product_quantity:
+            self.product.modify_quantity(-self.quantity)
+        
+        super().save(*args, **kwargs)
+        
+    class Meta:
+        verbose_name = "Ação produto"
+        verbose_name_plural = "Ações produtos"

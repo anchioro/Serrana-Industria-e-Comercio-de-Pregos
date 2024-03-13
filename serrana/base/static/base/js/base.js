@@ -5,6 +5,14 @@ $(document).ready(function() {
     const $logoSubText = $(".font-sub-logo");
     const $clearButton = $("#clear-button");
     const $searchField = $("#search-field");
+    const $idAction = $("#id_action")
+    const $idActionOption = $("#id_action option[value='']")
+    
+    $idActionOption.text("Selecione uma opção");
+
+    $idAction.on("click", function() {
+        $(this).find($idActionOption).prop("disabled", true);
+    });
     
     $clearButton.click(function() {
         $searchField.val("");
