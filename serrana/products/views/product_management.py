@@ -122,6 +122,12 @@ class ProductActionView(LoginRequiredMixin, CreateView):
         context["product"] = product
         return context
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        product = get_object_or_404(Product, slug=self.kwargs["slug"])
+        kwargs["product"] = product
+        return kwargs
+    
     def get_success_url(self):
         return reverse_lazy("products:history", kwargs={'slug': self.kwargs["slug"]})
     

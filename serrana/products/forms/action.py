@@ -10,18 +10,21 @@ class ActionForm(forms.ModelForm):
         "action",
         "quantity",
         "invoice",
-        "unit",
         ]
         
         labels = {
             "action": "Ação",
             "quantity": "Quantidade",
             "invoice": "Código Nota Fiscal",
-            "unit": "Unidade de Medida",
         }
 
     def __init__(self, *args, **kwargs):
+        product = kwargs.pop("product", None)
+        
         super().__init__(*args, **kwargs)
+        
+        if product:
+            self.product = product
         
         if self.instance:
             if self.instance.action == "exit":
@@ -37,6 +40,10 @@ class ActionForm(forms.ModelForm):
             self.add_error("invoice", ValidationError("Não é possível realizar a entrada de produtos fornecendo um código fiscal."))
         elif action == "exit" and not invoice:
             self.add_error("invoice", ValidationError("Não é possível realizar a saída de produtos sem fornecer um código fiscal."))
+        
+        quantity = self.cleaned_data.get("quantity")
+        if hasattr(self, "product") and action == "exit" and quantity > self.product.product_quantity:
+            self.add_error("quantity", ValidationError("A quantidade de saída não pode ser maior que a quantidade em estoque."))
         
         return super().clean()
     

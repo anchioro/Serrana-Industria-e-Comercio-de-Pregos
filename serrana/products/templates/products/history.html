@@ -58,7 +58,6 @@
                     <th>Responsável</th>
                     <th>Quantidade</th>
                     <th>Código Fiscal</th>
-                    <th>Unidade de Medida</th>
                 </tr>
             </thead>
 
@@ -85,13 +84,6 @@
                         <td>
                             {% if action.invoice %}
                                 {{ action.invoice }}
-                            {% else %}
-                                ---
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if action.unit %}
-                                {{ action.unit }}
                             {% else %}
                                 ---
                             {% endif %}

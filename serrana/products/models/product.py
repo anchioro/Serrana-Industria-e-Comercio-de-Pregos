@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Product(models.Model):
@@ -82,10 +83,8 @@ class ProductAction(models.Model):
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     quantity = models.IntegerField(default=0, validators=[MinValueValidator(1)])
     invoice = models.IntegerField(unique=True)
-    unit = models. CharField(max_length=10, blank=True, null=True)
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    
     
     def save(self, *args, **kwargs):
         self.created_at = timezone.now()
