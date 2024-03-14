@@ -8,19 +8,20 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.urls import reverse_lazy
 from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 from re import match
 
 
 # Create your views here.
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
-    paginate_by = 100
+    paginate_by = 25
     template_name = "products/index.html"
     ordering = "-id"
     
 class ProductSearchView(LoginRequiredMixin, ListView):
     model = Product
-    paginate_by = 100
+    paginate_by = 25
     template_name = "products/index.html"
     ordering = "-id"
     
@@ -73,6 +74,46 @@ class ProductInformationView(LoginRequiredMixin, DetailView):
         product = self.get_object()
         context["product"] = product
         return context
+
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "products/create.html"
+    success_url = reverse_lazy("products:index")
+    
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+    
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "products/update.html"
+    success_url = reverse_lazy("products:index")
+    
+    def form_valid(self, form):
+        with transaction.atomic():
+            response = super().form_valid(form)
+            
+            if form.is_valid():
+                form.save()
+                
+                product_edit_instance = ProductAction.objects.create(
+                    product = form.instance,
+                    action = "edit",
+                    created_at = timezone.now(),
+                    created_by = self.request.user,
+                )
+                
+                product_edit_instance.save()
+                
+                return response
+            else:
+                return self.form_invalid(form)
+    
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
+    model = Product
+    success_url = reverse_lazy("products:index")
     
 class ProductHistoryView(LoginRequiredMixin, ListView):
     model = ProductAction
@@ -89,17 +130,6 @@ class ProductHistoryView(LoginRequiredMixin, ListView):
         context["product"] = product
         return context
 
-
-class ProductCreateView(LoginRequiredMixin, CreateView):
-    model = Product
-    form_class = ProductForm
-    template_name = "products/create.html"
-    success_url = reverse_lazy("products:index")
-    
-    def form_valid(self, form):
-        form.instance.created_by = self.request.user
-        return super().form_valid(form)
-    
 class ProductActionView(LoginRequiredMixin, CreateView):
     model = ProductAction
     form_class = ActionForm
@@ -131,22 +161,3 @@ class ProductActionView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy("products:history", kwargs={'slug': self.kwargs["slug"]})
     
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
-    model = Product
-    form_class = ProductForm
-    template_name = "products/update.html"
-    success_url = reverse_lazy("products:index")
-    
-    def form_valid(self, form):
-        with transaction.atomic():
-            response = super().form_valid(form)
-            
-            if form.is_valid():
-                form.save()
-                return response
-            else:
-                return self.form_invalid(form)
-    
-class ProductDeleteView(LoginRequiredMixin, DeleteView):
-    model = Product
-    success_url = reverse_lazy("products:index")

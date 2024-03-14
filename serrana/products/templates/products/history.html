@@ -11,7 +11,7 @@
     </a>
 
     <h2 class="mb-3">
-        Histórico de {{ product.product_name }}
+        {{ product.product_name }}
     </h2>
 
     <hr>
@@ -47,6 +47,10 @@
             </div>
         </div>
     </div>
+    
+    <div class="mt-4">
+        <h3>Histórico</h3>
+    </div>
 
     <div class="table-responsive">
         <table class="table table-striped table-sm">
@@ -65,21 +69,22 @@
                 {% for action in page_obj %}
                     <tr>
                         <td>
-                            {% if action.action == "entry" %}
-                                Entrada
-                            {% else %}
-                                Saída
-                            {% endif %}
+                            {% if action.action == "entry" %}Entrada{% endif %}
+                            {% if action.action == "exit" %}Saída{% endif %}
+                            {% if action.action == "edit" %}Edição{% endif %}
                         </td>
                         <td>{{ action.created_at|date:"d/m/Y" }}</td>
                         <td>{{ action.created_at|time:"H:i" }}</td>
                         <td>{{ action.created_by|get_full_name_from_username }}</td>
                         <td>
                             {% if action.action == "entry" %}
-                                <span class="text-success">+{{ action.quantity|stringformat:"02d" }}</span>
-                            {% else %}
-                                <span class="text-danger">-{{ action.quantity|stringformat:"02d" }}</span>
+                            <span class="text-success">+{{ action.quantity|stringformat:"02d" }}</span>
                             {% endif %}
+                            {% if action.action == "exit" %}
+                            <span class="text-danger">-{{ action.quantity|stringformat:"02d" }}</span>
+                            {% endif %}
+                            {% if action.action == "edit" %}---{% endif %}
+
                         </td>
                         <td>
                             {% if action.invoice %}
