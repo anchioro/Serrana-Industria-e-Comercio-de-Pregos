@@ -40,7 +40,7 @@
                         <td>{{ user.id }}</td>
                         <td>
                             {% if not user.first_name %}
-                            <i class="bi bi-ban"></i> Não definido 
+                                <i class="bi bi-ban"></i> Não definido 
                             {% else %}
                                 {{ user.get_full_name | title }}
                             {% endif %}

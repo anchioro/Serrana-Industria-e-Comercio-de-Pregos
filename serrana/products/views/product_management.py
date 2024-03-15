@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from products.models.product import Product
 from products.forms.product import ProductForm
-from products.models.product import ProductAction
+from products.models.product import ProductAction, ProductChangeLog
 from products.forms.action import ActionForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
@@ -92,24 +92,47 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("products:index")
     
     def form_valid(self, form):
+        instance = form.instance
+        original_instance = form.Meta.model.objects.get(pk=instance.pk)
         with transaction.atomic():
             response = super().form_valid(form)
             
             if form.is_valid():
                 form.save()
                 
-                product_edit_instance = ProductAction.objects.create(
+                changed_fields = {}
+                for field in form.fields:
+                    original_value = getattr(original_instance, field)
+                    modified_value = getattr(instance, field)
+                    
+                    if original_value != modified_value:
+                        changed_fields[field] = {
+                            "original_value": original_value,
+                            "modified_value": modified_value
+                        }
+                
+                if changed_fields:
+                    product_action = ProductAction.objects.create(
                     product = form.instance,
                     action = "edit",
                     created_at = timezone.now(),
                     created_by = self.request.user,
-                )
+                    )
                 
-                product_edit_instance.save()
+                    product_action.save()
+                    
+                    for field_name, values in changed_fields.items():
+                        log_entry = ProductChangeLog.objects.create(
+                        product_action=product_action,
+                        field_name=field_name,
+                        original_value=str(values["original_value"]),
+                        modified_value=str(values["modified_value"]),
+                        )
+                        
+                        log_entry.save()
                 
-                return response
-            else:
-                return self.form_invalid(form)
+            return response
+
     
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
@@ -159,5 +182,5 @@ class ProductActionView(LoginRequiredMixin, CreateView):
         return kwargs
     
     def get_success_url(self):
-        return reverse_lazy("products:history", kwargs={'slug': self.kwargs["slug"]})
+        return reverse_lazy("products:history", kwargs={"slug": self.kwargs["slug"]})
     

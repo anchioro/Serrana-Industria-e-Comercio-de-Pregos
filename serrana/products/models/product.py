@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Product(models.Model):
@@ -18,48 +17,51 @@ class Product(models.Model):
     min_stock_quantity = models.IntegerField(blank=True, null=True)
     max_stock_quantity = models.IntegerField(blank=True, null=True)
     product_status = models.CharField(max_length=255, blank=True)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.searchable_fields
+        return f"{self.product_name}, {self.product_codebar}, {self.product_diameter}, {self.product_weight}, {self.storage_location}"
     
     def _set_min_stock_value(self):
-        if not self.product_quantity:
-            self.min_stock_quantity = 0
-            return
+        # if not self.product_quantity:
+        #     self.min_stock_quantity = 0
+        #     return
         
-        self.min_stock_quantity = self.product_quantity // 2
+        # self.min_stock_quantity = self.product_quantity // 2
+        ...
         
     def _set_max_stock_value(self):
-        if not self.product_quantity:
-            self.max_stock_quantity = 0
-            return
+        # if not self.product_quantity:
+        #     self.max_stock_quantity = 0
+        #     return
         
-        self.max_stock_quantity = self.product_quantity * 1.5
+        # self.max_stock_quantity = self.product_quantity * 1.5
+        ...
     
     def _get_stock_status(self):
-        if not self.product_quantity:
-            self.product_status = "Estoque zerado"
-        elif self.product_quantity < self.min_stock_quantity:
-            self.product_status = "Estoque baixo"  
-        elif self.product_quantity > self.max_stock_quantity:
-            self.product_status = "Estoque alto"
-        else:
-            self.product_status = "Com estoque"
+        # if not self.product_quantity:
+        #     self.product_status = "Estoque zerado"
+        # elif self.product_quantity < self.min_stock_quantity:
+        #     self.product_status = "Estoque baixo"  
+        # elif self.product_quantity > self.max_stock_quantity:
+        #     self.product_status = "Estoque alto"
+        # else:
+        #     self.product_status = "Com estoque"
+        ...
         
     def save(self, *args, **kwargs):
         slug_text = f"{self.product_name} {self.storage_location}"
         self.slug = slugify(slug_text)
         
-        self.created_at = timezone.now()
+        # self.created_at = timezone.now()
         if "request" in kwargs:
             self.created_by = kwargs["request"].user
         
-        self._set_min_stock_value()
-        self._set_max_stock_value()
+        # self._set_min_stock_value()
+        # self._set_max_stock_value()
         
-        self._get_stock_status()
+        # self._get_stock_status()
         
         super().save(*args, **kwargs)
     
@@ -82,12 +84,12 @@ class ProductAction(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     quantity = models.IntegerField(default=0, validators=[MinValueValidator(1)])
-    invoice = models.IntegerField(unique=True)
-    created_at = models.DateTimeField()
+    invoice = models.IntegerField(unique=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def save(self, *args, **kwargs):
-        self.created_at = timezone.now()
+        # self.created_at = timezone.now()
         if "request" in kwargs:
             self.created_by = kwargs["request"].user
         
@@ -101,3 +103,9 @@ class ProductAction(models.Model):
     class Meta:
         verbose_name = "Ação produto"
         verbose_name_plural = "Ações produtos"
+        
+class ProductChangeLog(models.Model):
+    product_action = models.ForeignKey(ProductAction, on_delete=models.CASCADE)
+    field_name = models.CharField(max_length=255)
+    original_value = models.TextField()
+    modified_value = models.TextField()
