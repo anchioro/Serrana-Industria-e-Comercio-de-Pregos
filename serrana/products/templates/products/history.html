@@ -116,13 +116,15 @@
                                         {% if log.product_action_id == action.id %}
                                             <div class="row">
                                                 <div class="col">
-                                                    Field name: {{ log.field_name }}
-                                                </div>
-                                                <div class="col">
-                                                    Original name: {{ log.original_value }}
-                                                </div>
-                                                <div class="col">
-                                                    Modified name: {{ log.modified_value }}
+                                                    {% with field_display_name=log_field_display_names|get:log.field_name %}
+                                                        {% if field_display_name %}
+                                                            <span class="fw-bold">{{ field_display_name }}</span>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                    
+                                                    {% if log.field_name != "location_description" %}
+                                                        trocado de <span class="fw-medium text-bg-danger">{{ log.original_value }}</span> para <span class="fw-medium text-bg-success">{{ log.modified_value }}</span>.
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         {% endif %}

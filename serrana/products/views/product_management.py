@@ -143,6 +143,15 @@ class ProductHistoryView(LoginRequiredMixin, ListView):
     paginate_by = 25
     template_name = "products/history.html"
 
+    log_field_display_names = {
+        "product_name": "Nome do produto",
+        "product_diameter": "Bitola do produto",
+        "product_weight": "Embalagem do produto",
+        "product_quantity": "Quantidade do produto",
+        "product_codebar": "Código do produto",
+        "storage_location": "Estoque físico",
+    }
+
     def get_queryset(self):
         return ProductAction.objects.filter(product__slug=self.kwargs["slug"]).order_by("-created_at")
     
@@ -158,6 +167,7 @@ class ProductHistoryView(LoginRequiredMixin, ListView):
 
         context["product"] = product
         context["change_log"] = product_change_logs
+        context["log_field_display_names"] = self.log_field_display_names
         return context
 
 class ProductActionView(LoginRequiredMixin, CreateView):

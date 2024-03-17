@@ -11,3 +11,7 @@ def get_full_name_from_username(username):
         return full_name
     except User.DoesNotExist:
         return "Unknown User"
+    
+@register.filter
+def get(d, k):
+    return d.get(k, "")
