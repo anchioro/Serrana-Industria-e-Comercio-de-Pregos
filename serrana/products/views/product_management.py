@@ -142,14 +142,22 @@ class ProductHistoryView(LoginRequiredMixin, ListView):
     model = ProductAction
     paginate_by = 25
     template_name = "products/history.html"
-    context_object_name = "product_actions"
 
     def get_queryset(self):
         return ProductAction.objects.filter(product__slug=self.kwargs["slug"]).order_by("-created_at")
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["product"] = get_object_or_404(Product, slug=self.kwargs["slug"])
+        product = get_object_or_404(Product, slug=self.kwargs["slug"])
+        product_actions = self.get_queryset()
+        
+        product_change_logs = []
+        for action in product_actions:
+            logs = action.productchangelog_set.all()
+            product_change_logs.extend(logs)
+
+        context["product"] = product
+        context["change_log"] = product_change_logs
         return context
 
 class ProductActionView(LoginRequiredMixin, CreateView):

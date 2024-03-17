@@ -76,7 +76,11 @@
                         </td>
                         <td>{{ action.created_at|date:"d/m/Y" }}</td>
                         <td>{{ action.created_at|time:"H:i" }}</td>
-                        <td>{{ action.created_by|get_full_name_from_username }}</td>
+                        <td>{% if action.created_by|get_full_name_from_username %}
+                                {{ action.created_by|get_full_name_from_username }}
+                            {% else %}
+                                {{ action.created_by }}
+                            {% endif %}</td>
                         <td>
                             {% if action.action == "entry" %}
                             <span class="text-success">+{{ action.quantity|stringformat:"02d" }}</span>
@@ -103,12 +107,26 @@
                             {% endif %}
                         </td>
                     </tr>
-                    <tr id="collapseRow{{ action.id }}" class="collapse-row"></tr>
-                    <tr id="collapseContent{{ action.id }}" class="collapse-content collapse-row">
+                    <tr class="collapse-row"></tr>
+                    <tr class="collapse-content collapse-row">
                         <td colspan="7">
                             <div class="collapse my-2" id="collapse{{ action.id }}">
                                 <div class="card card-body">
-                                    content {{ action }}
+                                    {% for log in change_log %}
+                                        {% if log.product_action_id == action.id %}
+                                            <div class="row">
+                                                <div class="col">
+                                                    Field name: {{ log.field_name }}
+                                                </div>
+                                                <div class="col">
+                                                    Original name: {{ log.original_value }}
+                                                </div>
+                                                <div class="col">
+                                                    Modified name: {{ log.modified_value }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
                         </td>

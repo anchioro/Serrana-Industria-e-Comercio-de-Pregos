@@ -54,7 +54,6 @@ class Product(models.Model):
         slug_text = f"{self.product_name} {self.storage_location}"
         self.slug = slugify(slug_text)
         
-        # self.created_at = timezone.now()
         if "request" in kwargs:
             self.created_by = kwargs["request"].user
         
@@ -89,7 +88,6 @@ class ProductAction(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def save(self, *args, **kwargs):
-        # self.created_at = timezone.now()
         if "request" in kwargs:
             self.created_by = kwargs["request"].user
         
