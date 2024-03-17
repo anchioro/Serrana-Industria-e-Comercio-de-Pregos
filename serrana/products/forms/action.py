@@ -43,7 +43,7 @@ class ActionForm(forms.ModelForm):
         
         quantity = self.cleaned_data.get("quantity")
         if hasattr(self, "product") and action == "exit" and quantity > self.product.product_quantity:
-            self.add_error("quantity", ValidationError("A quantidade de saída não pode ser maior que a quantidade em estoque."))
+            self.add_error("quantity", ValidationError(f"O estoque atual do produto é de {self.product.product_quantity}."))
         
         return super().clean()
     

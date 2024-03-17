@@ -149,8 +149,7 @@ class ProductHistoryView(LoginRequiredMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product = get_object_or_404(Product, slug=self.kwargs["slug"])
-        context["product"] = product
+        context["product"] = get_object_or_404(Product, slug=self.kwargs["slug"])
         return context
 
 class ProductActionView(LoginRequiredMixin, CreateView):

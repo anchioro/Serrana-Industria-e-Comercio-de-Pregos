@@ -75,11 +75,11 @@ class ProductForm(forms.ModelForm):
     def clean(self):
         product_codebar = self.cleaned_data.get("product_codebar")
         
-        if not product_codebar.isnumeric():
+        if product_codebar is not None and not product_codebar.isnumeric():
             self.add_error("product_codebar", ValidationError("Código de barras só pode conter números."))
         
         CODE_BAR_LENGTH = 13
-        if len(product_codebar) < CODE_BAR_LENGTH:
+        if product_codebar is not None and len(product_codebar) < CODE_BAR_LENGTH:
             self.add_error("product_codebar", ValidationError(f"Código de barras deve conter 13 dígitos. Você forneceu {len(product_codebar)} dígitos."))
             
         return super().clean()

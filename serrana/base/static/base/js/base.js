@@ -7,20 +7,29 @@ $(document).ready(function() {
     const $searchField = $("#search-field");
     const $idAction = $("#id_action")
     const $idActionOption = $("#id_action option[value='']")
-    
-    $idActionOption.text("Selecione uma opção");
+    const $collapseRow = $(".collapse-row");
 
+    // Edition information in the products/history.html under the selected row
+    $collapseRow.hide();
+    $("[data-bs-toggle='collapse']").click(function() {
+        var targetId = $(this).data("bs-target");
+        $(targetId).closest(".collapse-row").toggle();
+    });
+
+    // Disable the placeholder text in selection field of actions/action.html
+    $idActionOption.text("Selecione uma opção");
     $idAction.on("click", function() {
         $(this).find($idActionOption).prop("disabled", true);
     });
     
+    // Clear the search  input on click event
     $clearButton.click(function() {
         $searchField.val("");
         $searchField.focus();
     });
 
+    // Set the subtitle of the logo according to the page's path in base.html
     var $lastLocation = $logoText.offset();
-
     const checkLocation = function() {
         const $currentLocation = $logoText.offset();
         $lastLocation = $currentLocation;

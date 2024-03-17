@@ -62,9 +62,10 @@
                     <th>Responsável</th>
                     <th>Quantidade</th>
                     <th>Código Fiscal</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
-
+        
             <tbody>
                 {% for action in page_obj %}
                     <tr>
@@ -84,7 +85,6 @@
                             <span class="text-danger">-{{ action.quantity|stringformat:"02d" }}</span>
                             {% endif %}
                             {% if action.action == "edit" %}---{% endif %}
-
                         </td>
                         <td>
                             {% if action.invoice %}
@@ -93,10 +93,29 @@
                                 ---
                             {% endif %}
                         </td>
+                        <td>
+                            {% if action.action == "edit" %}
+                                <button class="btn btn-primary btn-sm" style="width:50px" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ action.id }}" aria-expanded="false" aria-controls="collapse{{ action.id }}">
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                            {% else %}
+                                Nenhuma ação disponível.
+                            {% endif %}
+                        </td>
                     </tr>
-                    {% empty %}
+                    <tr id="collapseRow{{ action.id }}" class="collapse-row"></tr>
+                    <tr id="collapseContent{{ action.id }}" class="collapse-content collapse-row">
+                        <td colspan="7">
+                            <div class="collapse my-2" id="collapse{{ action.id }}">
+                                <div class="card card-body">
+                                    content {{ action }}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center">Nenhum histórico disponível.</td>
+                        <td colspan="7" class="text-center">Nenhum histórico disponível.</td>
                     </tr>
                 {% endfor %}
             </tbody>
