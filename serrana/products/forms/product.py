@@ -1,5 +1,6 @@
 from django import forms
 from products.models.product import Product
+from django.core.exceptions import ValidationError
 import random
 
 class ProductForm(forms.ModelForm):
@@ -7,7 +8,9 @@ class ProductForm(forms.ModelForm):
         model = Product
         
         exclude = [
-            "slug"
+            "slug",
+            "created_at",
+            "created_by",
         ]
         
         labels = {
@@ -69,3 +72,14 @@ class ProductForm(forms.ModelForm):
         self.fields["storage_location"].widget.attrs["placeholder"] = self.__random_choice_to_placeholder("storage_location")
         self.fields["location_description"].widget.attrs["placeholder"] = "Digite uma descrição..."
         
+    def clean(self):
+        product_codebar = self.cleaned_data.get("product_codebar")
+        
+        if product_codebar is not None and not product_codebar.isnumeric():
+            self.add_error("product_codebar", ValidationError("Código de barras só pode conter números."))
+        
+        CODE_BAR_LENGTH = 13
+        if product_codebar is not None and len(product_codebar) < CODE_BAR_LENGTH:
+            self.add_error("product_codebar", ValidationError(f"Código de barras deve conter 13 dígitos. Você forneceu {len(product_codebar)} dígitos."))
+            
+        return super().clean()

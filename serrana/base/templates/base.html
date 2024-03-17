@@ -76,12 +76,15 @@
                     </li>
                     <li>
                         {% if request.user.is_authenticated %}
-                                {{ request.user.get_full_name }}
-                                <i class="bi bi-person-circle"></i>
+                            {% if request.user.get_full_name %}
+                                {{ request.user.get_full_name | title  }}
+                            {% else %}
+                                {{ request.user.username | title }}
+                            {% endif %}
                         {% else %}
                             Visitante
-                            <i class="bi bi-person-circle"></i>
                         {% endif %}
+                        <i class="bi bi-person-circle"></i>
                     </li>
                 </ul>
           </div>
@@ -141,12 +144,15 @@
                         </li>
                         <li>
                             {% if request.user.is_authenticated %}
-                                {{ request.user.get_full_name }}
-                                <i class="bi bi-person-circle"></i>
+                                {% if request.user.get_full_name %}
+                                    {{ request.user.get_full_name | title }}
+                                {% else %}
+                                    {{ request.user.username | title }}
+                                {% endif %}
                             {% else %}
                                 Visitante
-                                <i class="bi bi-person-circle"></i>
                             {% endif %}
+                            <i class="bi bi-person-circle"></i>
                         </li>
                     </ul>
                 </nav>

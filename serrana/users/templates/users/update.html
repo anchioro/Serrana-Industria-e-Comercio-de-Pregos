@@ -31,6 +31,7 @@
       </div>
 
       {{ form.is_active|as_crispy_field }}
+      {{ form.is_staff|as_crispy_field }}
 
       {% include "partials/_submit_button.html" %}
     </form>

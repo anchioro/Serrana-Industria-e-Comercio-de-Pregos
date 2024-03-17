@@ -8,7 +8,7 @@ class UserForm(forms.ModelForm):
     confirm_password = forms.CharField(label="Confirmar Senha", widget=forms.PasswordInput)
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "username", "password", "is_active"]
+        fields = ["first_name", "last_name", "username", "password", "is_active", "is_staff"]
         widgets = {
             "password": forms.PasswordInput()
         }
@@ -25,13 +25,11 @@ class UserForm(forms.ModelForm):
             else:
                 self.fields["confirm_password"].required = False
         
-    def save(self):
-        password = self.cleaned_data.get("password")
-        confirm_password = self.cleaned_data.get("confirm_password")
+    def save(self, commit=True):
         user = super().save(commit=False)
         
-        if password and password == confirm_password:
-            user.set_password(password)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
             user.save()
 
         return user
@@ -54,7 +52,7 @@ class UserForm(forms.ModelForm):
         password = self.cleaned_data.get("password")
         confirm_password = self.cleaned_data.get("confirm_password")
         
-        if password != confirm_password:
+        if password and password != confirm_password:
             self.add_error("password", ValidationError("As senhas não coincidem."))
             self.add_error("confirm_password", ValidationError("As senhas não coincidem."))
         
