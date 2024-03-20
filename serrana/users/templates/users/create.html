@@ -10,7 +10,14 @@
         {% include "partials/_form_non_field_errors.html" %}
         {% csrf_token %}
 
-        {{ form|crispy}}
+        {{ form.first_name|as_crispy_field }}
+        {{ form.last_name|as_crispy_field }}
+        {{ form.username|as_crispy_field }}
+
+        {{ form.password|as_crispy_field }}
+        {{ form.confirm_password|as_crispy_field }}
+
+        {{ form.is_staff|as_crispy_field }}
 
         {% include "partials/_submit_button.html" %}
     </form>
