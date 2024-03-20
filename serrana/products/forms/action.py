@@ -40,6 +40,9 @@ class ActionForm(forms.ModelForm):
             self.add_error("invoice", ValidationError("Não é possível realizar a entrada de produtos fornecendo um código fiscal."))
         elif action == "exit" and not invoice:
             self.add_error("invoice", ValidationError("Não é possível realizar a saída de produtos sem fornecer um código fiscal."))
+            
+        if ProductAction.objects.filter(invoice=invoice).exists():
+            self.add_error("invoice", "Código já existente.")
         
         quantity = self.cleaned_data.get("quantity")
         if hasattr(self, "product") and action == "exit" and quantity > self.product.product_quantity:

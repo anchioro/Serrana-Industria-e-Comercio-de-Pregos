@@ -75,11 +75,19 @@ class ProductForm(forms.ModelForm):
     def clean(self):
         product_codebar = self.cleaned_data.get("product_codebar")
         
+        if Product.objects.filter(product_codebar=product_codebar).exists():
+            self.add_error("product_codebar", "Código de barras já existente.")
+        
         if product_codebar is not None and not product_codebar.isnumeric():
             self.add_error("product_codebar", ValidationError("Código de barras só pode conter números."))
         
         CODE_BAR_LENGTH = 13
         if product_codebar is not None and len(product_codebar) < CODE_BAR_LENGTH:
             self.add_error("product_codebar", ValidationError(f"Código de barras deve conter 13 dígitos. Você forneceu {len(product_codebar)} dígitos."))
-            
+        
+        storage_location = self.cleaned_data.get("storage_location")
+        
+        if Product.objects.filter(storage_location=storage_location).exists():
+            self.add_error("storage_location", "Lote já existente neste local.")
+        
         return super().clean()
