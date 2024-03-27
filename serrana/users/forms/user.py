@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.contrib.auth.hashers import check_password
 
 
 class UserForm(forms.ModelForm):
@@ -28,7 +29,17 @@ class UserForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         
-        user.set_password(self.cleaned_data["password"])
+        new_password = self.cleaned_data.get("password")
+        
+        if not self.instance._state.adding:
+            old_password_from_db = User.objects.get(pk=user.pk).password
+            if check_password(new_password, old_password_from_db) or not new_password:
+                user.password = old_password_from_db
+            else:
+                user.set_password(new_password)
+        else:
+            user.set_password(new_password)
+            
         if commit:
             user.save()
 
@@ -51,7 +62,7 @@ class UserForm(forms.ModelForm):
         
         password = self.cleaned_data.get("password")
         confirm_password = self.cleaned_data.get("confirm_password")
-        
+                
         if password and password != confirm_password:
             self.add_error("password", ValidationError("As senhas não coincidem."))
             self.add_error("confirm_password", ValidationError("As senhas não coincidem."))

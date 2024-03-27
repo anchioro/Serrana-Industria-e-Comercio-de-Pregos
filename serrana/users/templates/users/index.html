@@ -46,7 +46,12 @@
                             {% endif %}
                         </td>
                         <td>{{ user.username }}</td>
-                        <td>{{ user.last_login }}</td>
+                        <td>
+                            {% if not user.last_login %}
+                                Nunca fez login.
+                            {% else %}
+                                {{ user.last_login }}</td>
+                            {% endif %}
                         <td>
                             {% if user.is_staff %}
                                 Sim
