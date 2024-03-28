@@ -1,8 +1,11 @@
 from django.db import models
+from django.db.models import Sum, Avg
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from datetime import timedelta
+from statistics import stdev
 
 # Create your models here.
 class Product(models.Model):
@@ -22,33 +25,6 @@ class Product(models.Model):
     
     def __str__(self):
         return f"{self.product_name}, {self.product_codebar}, {self.product_diameter}, {self.product_weight}, {self.storage_location}"
-    
-    def _set_min_stock_value(self):
-        # if not self.product_quantity:
-        #     self.min_stock_quantity = 0
-        #     return
-        
-        # self.min_stock_quantity = self.product_quantity // 2
-        ...
-        
-    def _set_max_stock_value(self):
-        # if not self.product_quantity:
-        #     self.max_stock_quantity = 0
-        #     return
-        
-        # self.max_stock_quantity = self.product_quantity * 1.5
-        ...
-    
-    def _get_stock_status(self):
-        # if not self.product_quantity:
-        #     self.product_status = "Estoque zerado"
-        # elif self.product_quantity < self.min_stock_quantity:
-        #     self.product_status = "Estoque baixo"  
-        # elif self.product_quantity > self.max_stock_quantity:
-        #     self.product_status = "Estoque alto"
-        # else:
-        #     self.product_status = "Com estoque"
-        ...
         
     def save(self, *args, **kwargs):
         slug_text = f"{self.product_name} {self.storage_location}"
@@ -56,11 +32,6 @@ class Product(models.Model):
         
         if "request" in kwargs:
             self.created_by = kwargs["request"].user
-        
-        # self._set_min_stock_value()
-        # self._set_max_stock_value()
-        
-        # self._get_stock_status()
         
         super().save(*args, **kwargs)
     
@@ -87,6 +58,73 @@ class ProductAction(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
+        
+    def _set_min_stock_value(self):
+        MONTH = 30
+        Z = 1.65
+        
+        start_date = timezone.now() - timedelta(days=MONTH)
+        end_date = timezone.now()
+
+        total_demand_quantity = ProductAction.objects.filter(
+            product=self.product,
+            action="exit",
+            created_at__range=(start_date, end_date)
+        ).aggregate(Sum("quantity"))["quantity__sum"]
+        
+        if total_demand_quantity is None:
+            total_demand_quantity = 0
+            
+        average_daily_demand = total_demand_quantity / MONTH
+        
+        daily_demand = [action.quantity for action in ProductAction.objects.filter(
+            product=self.product,
+            action="exit",
+            created_at__range=(timezone.now() - timedelta(days=1), end_date)
+        )]
+        
+        if len(daily_demand) > 1:
+            demand_stdev = stdev(daily_demand)
+        else:
+            demand_stdev = 0
+        
+        security_stock = Z * demand_stdev
+        
+        min_stock = average_daily_demand + security_stock
+        
+        if min_stock:
+            self.product.min_stock_quantity = min_stock
+        else:
+            self.product.min_stock_quantity = 0
+        
+        self.product.save()
+        
+    def _set_max_stock_value(self):
+        min_stock = self.product.min_stock_quantity
+        
+        self.product.max_stock_quantity = min_stock + min_stock * .5
+        
+        self.product.save()
+    
+    def _get_stock_status(self):
+        min_stock = self.product.min_stock_quantity
+        max_stock = self.product.max_stock_quantity
+        current_stock = self.product.product_quantity
+        
+        if not min_stock:
+            self.product.product_status = "Sem estoque mínimo definido."
+        elif not max_stock:
+            self.product.product_status = "Sem estoque máximo definido."
+        else:
+            if current_stock <= min_stock:
+                self.product.product_status = "Abaixo do estoque mínimo."
+            elif current_stock >= max_stock:
+                self.product.product_status = "Excedeu o estoque máximo."
+            else:
+                self.product.product_status = "Com estoque suficiente."
+            
+        self.product.save()
+    
     def save(self, *args, **kwargs):
         if "request" in kwargs:
             self.created_by = kwargs["request"].user
@@ -95,6 +133,13 @@ class ProductAction(models.Model):
             self.product.modify_quantity(self.quantity)
         elif self.action == "exit" and not self.quantity > self.product.product_quantity:
             self.product.modify_quantity(-self.quantity)
+            
+        super().save(*args, **kwargs)
+        
+        self._set_min_stock_value()
+        self._set_max_stock_value()
+        
+        self._get_stock_status()
         
         super().save(*args, **kwargs)
         
