@@ -47,9 +47,27 @@
                         <td>{{ product.product_weight }}</td>
                         <td>{{ product.storage_location }}</td>
                         <td>{{ product.product_quantity }}</td>
-                        <td>{{ product.min_stock_quantity }}</td>
-                        <td>{{ product.max_stock_quantity }}</td>
-                        <td>{{ product.product_status }}</td>
+                        <td>
+                            {% if product.min_stock_quantity %}
+                                {{ product.min_stock_quantity }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.max_stock_quantity %}
+                                {{ product.max_stock_quantity }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.product_status %}
+                                {{ product.product_status }}
+                            {% else %}
+                                Status não foi definido.
+                            {% endif %}
+                        </td>
                         <td>
                             <div class="d-flex gap-1">
                                 {% if request.user.is_staff %}
