@@ -155,11 +155,14 @@ if env('ENV') == 'production':
     SESSION_COOKIE_SECURE = True
 
     CSRF_TRUSTED_ORIGINS = [
-        'hhtps://serrana.site'
+        'https://serrana.site'
     ]
     
 else:
     STATIC_URL = 'static/'
+    STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'base', 'static')
+    ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
