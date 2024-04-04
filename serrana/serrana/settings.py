@@ -30,7 +30,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['serrana.site']
 
 
 # Application definition
@@ -149,6 +149,15 @@ STATICFILES_DIRS = [
 if env('ENV') == 'production':
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
     STATICFILES_STORAGE = 'serrana.storage_backends.StaticStorage'
+    
+    # CSRF
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_TRUSTED_ORIGINS = [
+        'hhtps://serrana.site'
+    ]
+    
 else:
     STATIC_URL = 'static/'
 
