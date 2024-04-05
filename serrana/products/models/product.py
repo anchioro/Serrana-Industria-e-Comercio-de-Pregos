@@ -133,8 +133,6 @@ class ProductAction(models.Model):
             self.product.modify_quantity(self.quantity)
         elif self.action == "exit" and not self.quantity > self.product.product_quantity:
             self.product.modify_quantity(-self.quantity)
-            
-        super().save(*args, **kwargs)
         
         self._set_min_stock_value()
         self._set_max_stock_value()

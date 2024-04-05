@@ -113,7 +113,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
                 
                 if changed_fields:
                     product_action = ProductAction.objects.create(
-                    product = form.instance,
+                    product = instance,
                     action = "edit",
                     created_at = timezone.now(),
                     created_by = self.request.user,
