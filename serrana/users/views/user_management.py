@@ -4,14 +4,20 @@ from django.contrib.auth.models import User
 from users.forms.user import UserForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_POST
-
+from django.utils import timezone
 class UserListView(LoginRequiredMixin, ListView):
     model = User
     paginate_by = 100
     template_name = "users/index.html"
     ordering = "-last_login"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        context["now"] = timezone.now().date()
+        context["yesterday"] = timezone.now().date() - timezone.timedelta(days=1)
+        context["day_before_yesterday"] = timezone.now().date() - timezone.timedelta(days=2)
+        return context
     
 class UserCreateView(LoginRequiredMixin, CreateView):
     model = User
