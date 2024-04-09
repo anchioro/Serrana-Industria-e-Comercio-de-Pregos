@@ -1,11 +1,14 @@
 from django.db import models
-from django.db.models import Sum, Avg
+from django.db.models import Sum
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from datetime import timedelta
 from statistics import stdev
+
 
 # Create your models here.
 class Product(models.Model):
@@ -30,6 +33,8 @@ class Product(models.Model):
         slug_text = f"{self.product_name} {self.storage_location}"
         self.slug = slugify(slug_text)
         
+        self.product_name = self.product_name.title()
+        
         if "request" in kwargs:
             self.created_by = kwargs["request"].user
         
@@ -44,6 +49,18 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Produto"
         verbose_name_plural = "Produtos"
+        
+@receiver(post_save, sender=Product)
+def create_product_action(sender, instance, created, **kwargs):
+    if created:
+        user = User.objects.first()
+
+        ProductAction.objects.create(
+            product=instance,
+            action='creation',
+            created_at=timezone.now(),
+            created_by=user,
+        )
     
 class ProductAction(models.Model):
     ACTION_CHOICES = (
@@ -114,12 +131,12 @@ class ProductAction(models.Model):
         if not min_stock:
             self.product.product_status = "Sem estoque mínimo definido."
         elif not max_stock:
-            self.product.product_status = "Sem estoque máximo definido."
+            self.product.product_status = "Sem valor recomendado definido."
         else:
             if current_stock <= min_stock:
                 self.product.product_status = "Abaixo do estoque mínimo."
             elif current_stock >= max_stock:
-                self.product.product_status = "Excedeu o estoque máximo."
+                self.product.product_status = "Excedeu o valor ideal."
             else:
                 self.product.product_status = "Com estoque suficiente."
             
