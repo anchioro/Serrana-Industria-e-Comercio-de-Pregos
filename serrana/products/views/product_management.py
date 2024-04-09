@@ -20,10 +20,10 @@ class ProductListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         latest_actions_subquery = ProductAction.objects.filter(
-            product_id=OuterRef('id')
-        ).values('product_id').annotate(
-            latest_action=Max('created_at')
-        ).values('latest_action')
+            product_id=OuterRef("id")
+        ).values("product_id").annotate(
+            latest_action=Max("created_at")
+        ).values("latest_action")
         
         queryset = Product.objects.annotate(
             latest_action=latest_actions_subquery
@@ -72,7 +72,17 @@ class ProductSearchView(LoginRequiredMixin, ListView):
             return results
         
         else:
-            return Product.objects.all()
+            latest_actions_subquery = ProductAction.objects.filter(
+                product_id=OuterRef("id")
+            ).values("product_id").annotate(
+                latest_action=Max("created_at")
+            ).values("latest_action")
+            
+            queryset = Product.objects.annotate(
+                latest_action=latest_actions_subquery
+            ).order_by("-latest_action").distinct()
+            
+            return queryset
 
 class ProductInformationView(LoginRequiredMixin, DetailView):
     model = Product
