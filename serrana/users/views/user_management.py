@@ -1,10 +1,11 @@
 from django.db.models import Q
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.models import User
 from users.forms.user import UserForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
+from django.http import Http404
 class UserListView(LoginRequiredMixin, ListView):
     model = User
     paginate_by = 100
@@ -34,6 +35,28 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UserForm
     template_name = "users/update.html"
     success_url = reverse_lazy("users:index")
+    
+class UserProfileView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = "users/user-profile.html"
+    
+    def dispatch(self, request, *args, **kwargs):
+        # Get the user whose profile is being accessed
+        self.profile_user = self.get_object()
+
+        if self.request.user != self.profile_user:
+            raise Http404("You are not authorized to view this page")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        context["user"] = user
+        return context
+
+class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
+    ...
     
 class UserSearchView(LoginRequiredMixin, ListView):
     model = User

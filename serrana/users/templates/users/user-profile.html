@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}
+    Perfil {{ user.first_name }}
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <h2>Minhas Configurações</h2>
+
+        <ul class="nav nav-underline">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="collapse" href="#profile" role="button" aria-expanded="true" aria-controls="profile">
+                    Perfil <i class="bi bi-person"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#config" role="button" aria-expanded="false" aria-controls="config">
+                    Aparência <i class="bi bi-card-text"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#history" role="button" aria-expanded="false" aria-controls="history">
+                    Histórico de Atividades <i class="bi bi-clock-history"></i>
+                </a>
+            </li>
+
+            <li class="flex-grow-1"></li>
+
+            <li class="nav-item">
+                <form action="{% url "users:logout" %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link link-dark">
+                        <i class="bi bi-box-arrow-left"></i>
+                        Sair ou Encerrar Sessão
+                    </button>
+                </form>
+            </li>
+        </ul>
+
+        <div class="my-3 collapse show" id="profile">
+            <div class="card card-body">
+                <h4>{{ request.user.get_full_name }}</h4>
+
+                <ul class="list-group list-group-flush my-3">
+                    <li class="list-group-item">An item</li>
+                    <li class="list-group-item">A second item</li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A fourth item</li>
+                    <li class="list-group-item">And a fifth one</li>
+                </ul>
+
+                <h4>Informações Pessoais</h4>
+
+                <ul class="list-group list-group-flush my-3">
+                    <li class="list-group-item">An item</li>
+                    <li class="list-group-item">A second item</li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A fourth item</li>
+                    <li class="list-group-item">And a fifth one</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="my-3 collapse" id="config">
+            <div class="card card-body">
+                <h4>Tema</h4>
+                Tema escuro tema claro
+            </div>
+        </div>
+
+        <div class="my-3 collapse" id="history">
+            <div class="card card-body">
+                Not implemented
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $(".nav-link").click(function(event){
+                event.preventDefault();
+                
+                var targetCollapse = $(this).attr('href');
+                $(".collapse").collapse("hide");
+               
+                if (!$(targetCollapse).hasClass("show")) {
+                    $(targetCollapse).collapse("show");
+                }
+            });
+            
+            $(".collapse").on("hidden.bs.collapse", function () {
+                if (!$(".collapse.show").length) {
+                    $("#profile").collapse("show");
+                }
+            });
+        });
+    </script>
+    
+    
+    
+{% endblock content %}

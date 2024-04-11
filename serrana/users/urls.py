@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.user_management import UserListView, UserCreateView, UserUpdateView, UserDeleteView, UserSearchView
+from .views.user_management import UserListView, UserCreateView, UserUpdateView, UserDeleteView, UserSearchView, UserProfileView, UserProfileUpdateView
 from .views.auth import UserLoginView, UserLogoutView
 
 app_name = "users"
@@ -11,4 +11,6 @@ urlpatterns = [
     path("usuarios/cadastro/", UserCreateView.as_view(), name="create"),
     path("usuarios/<int:pk>/edit/", UserUpdateView.as_view(), name="update"),
     path("usuarios/<int:pk>/delete/", UserDeleteView.as_view(), name="delete"),
+    path("usuarios/<int:pk>/profile/", UserProfileView.as_view(), name="user"),
+    path("usuarios/<int:pk>/profile/edit", UserProfileUpdateView.as_view(), name="user-update"),
 ]
