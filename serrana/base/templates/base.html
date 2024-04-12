@@ -147,15 +147,12 @@
 
                     <ul class="nav nav-pills flex-column">
                         <li>
-                            <a href="{% if request.user.is_authenticated %}
-                                {% url "users:user" pk=request.user.pk %}
-                            {% else %}
-                                {% url "users:login" %}
-                            {% endif %}" class="nav-link link-dark">
+                            <a href="{% if request.user.is_authenticated %}{% url "users:user" pk=request.user.pk %}{% else %}{% url "users:login" %}{% endif %}" class="nav-link link-dark">
                                 <i class="bi bi-gear"></i>
                                 Configurações
                             </a>
                         </li>
+                        
                     </ul>
 
                     <hr>

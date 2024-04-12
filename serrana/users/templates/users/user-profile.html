@@ -9,17 +9,17 @@
 
         <ul class="nav nav-underline">
             <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="collapse" href="#profile" role="button" aria-expanded="true" aria-controls="profile">
+                <a class="nav-link link-dark" data-bs-toggle="collapse" href="#profile" role="button" aria-expanded="true" aria-controls="profile">
                     Perfil <i class="bi bi-person"></i>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="collapse" href="#config" role="button" aria-expanded="false" aria-controls="config">
+                <a class="nav-link link-dark" data-bs-toggle="collapse" href="#config" role="button" aria-expanded="false" aria-controls="config">
                     Aparência <i class="bi bi-card-text"></i>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="collapse" href="#history" role="button" aria-expanded="false" aria-controls="history">
+                <a class="nav-link link-dark" data-bs-toggle="collapse" href="#history" role="button" aria-expanded="false" aria-controls="history">
                     Histórico de Atividades <i class="bi bi-clock-history"></i>
                 </a>
             </li>
@@ -77,20 +77,33 @@
 
     <script>
         $(document).ready(function(){
-            $(".nav-link").click(function(event){
+
+            function setActiveProfileLink() {
+                $(".nav-link[data-bs-toggle='collapse']").removeClass("active");
+                $(".nav-link[data-bs-toggle='collapse'][href='#profile']").addClass("active");
+            }
+
+            setActiveProfileLink();
+
+            $(".nav-link[data-bs-toggle='collapse']").click(function(event){
                 event.preventDefault();
-                
-                var targetCollapse = $(this).attr('href');
+
+                $(".nav-link[data-bs-toggle='collapse']").removeClass("active");
+
+                var targetCollapse = $(this).attr("href");
                 $(".collapse").collapse("hide");
                
                 if (!$(targetCollapse).hasClass("show")) {
                     $(targetCollapse).collapse("show");
+                    $(this).addClass("active");
                 }
             });
             
             $(".collapse").on("hidden.bs.collapse", function () {
                 if (!$(".collapse.show").length) {
                     $("#profile").collapse("show");
+
+                    setActiveProfileLink();
                 }
             });
         });
