@@ -36,12 +36,20 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "users/update.html"
     success_url = reverse_lazy("users:index")
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["by_admin"] = True
+        return kwargs
+    
+    def form_valid(self, form):
+        form.save(by_admin=True)
+        return super().form_valid(form)
+    
 class UserProfileView(LoginRequiredMixin, DetailView):
     model = User
     template_name = "users/user-profile.html"
     
     def dispatch(self, request, *args, **kwargs):
-        # Get the user whose profile is being accessed
         self.profile_user = self.get_object()
 
         if self.request.user != self.profile_user:
@@ -53,10 +61,14 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
         context["user"] = user
+        context["section"] = self.request.GET.get("section", None)  # Captura o parâmetro 'section' da URL
         return context
 
 class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
-    ...
+    model = User
+    form_class = UserForm
+    template_name = "users/user-update.html"
+    success_url = reverse_lazy("home")
     
 class UserSearchView(LoginRequiredMixin, ListView):
     model = User

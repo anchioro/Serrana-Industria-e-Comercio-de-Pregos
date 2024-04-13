@@ -1,0 +1,86 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% load crispy_forms_tags %}
+{% block title %}
+  Atualização de Usuário
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2>Minhas Configurações</h2>
+
+        <ul class="nav nav-underline">
+            <li class="nav-item">
+                <a href="{% url "users:user" pk=request.user.pk %}?section=profile" class="nav-link link-dark">
+                    Perfil <i class="bi bi-person"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url "users:user" pk=request.user.pk %}?section=config" class="nav-link link-dark">
+                    Aparência <i class="bi bi-card-text"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url "users:user" pk=request.user.pk %}?section=history" class="nav-link link-dark">
+                    Histórico de Atividades <i class="bi bi-clock-history"></i>
+                </a>
+            </li>
+
+            <li class="flex-grow-1"></li>
+
+            <li class="nav-item">
+                <form action="{% url "users:logout" %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link link-dark">
+                        <i class="bi bi-box-arrow-left"></i>
+                        Sair ou Encerrar Sessão
+                    </button>
+                </form>
+            </li>
+        </ul>
+
+        <hr>
+        <h4 class="mb-3">Atualização da conta</h4>
+        <form method="post">
+            {% include "partials/_form_non_field_errors.html" %}
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col">
+                    {{ form.first_name|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ form.last_name|as_crispy_field }}
+                    </div>
+                </div>
+            {{ form.username|as_crispy_field }}
+
+            <p class="d-inline-flex gap-1">
+                <button class="btn color-theme" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
+                    Alterar a senha
+                </button>
+            </p>
+            <div class="collapse" id="collapsePassword">
+                <div class="row mb-3">
+                    {{ form.password|as_crispy_field }}
+                </div>
+                <div class="row mb-3">
+                    <div class="mb-3">
+                        {{ form.confirm_password|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+            
+            {{ form.email|as_crispy_field }}
+            
+            {% include "partials/_submit_button.html" %}
+        </form>
+    </div>
+
+    <script>
+      const errorsExists = {% if form.errors.password %} true {% elif form.errors.confirm_password %} true {% else %} false {% endif %};
+
+      if (errorsExists) {
+        $("#collapsePassword").addClass("show");
+    }
+    </script>
+{% endblock %}
