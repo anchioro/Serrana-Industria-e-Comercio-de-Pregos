@@ -43,5 +43,14 @@ main {
 }
 
 .color-theme:hover {
-    background-color: #f8d640;
+    background-color: #ffeb3b !important; 
+    border-color: rgba(218, 220, 224, .1);
+    box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+    color: #202124;
+}
+
+.color-theme:focus {
+    background-color: rgba(255, 235, 59, 0.8) !important; 
+    border-color: rgba(66, 133, 244, .1);
+    outline: none;
 }

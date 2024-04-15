@@ -75,7 +75,7 @@ class ProductForm(forms.ModelForm):
     def clean(self):
         product_codebar = self.cleaned_data.get("product_codebar")
         
-        if Product.objects.filter(product_codebar=product_codebar).exists():
+        if Product.objects.filter(product_codebar=product_codebar).exists() and self.instance._state.adding:
             self.add_error("product_codebar", "Código de barras já existente.")
         
         if product_codebar is not None and not product_codebar.isnumeric():
@@ -87,7 +87,7 @@ class ProductForm(forms.ModelForm):
         
         storage_location = self.cleaned_data.get("storage_location")
         
-        if Product.objects.filter(storage_location=storage_location).exists():
+        if Product.objects.filter(storage_location=storage_location).exists() and self.instance._state.adding:
             self.add_error("storage_location", "Lote já existente neste local.")
         
         return super().clean()

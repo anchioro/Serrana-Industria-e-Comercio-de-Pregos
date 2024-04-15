@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Max, OuterRef
 from django.shortcuts import get_object_or_404
 from products.models.product import Product
 from products.forms.product import ProductForm
@@ -17,7 +17,21 @@ class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     paginate_by = 25
     template_name = "products/index.html"
-    ordering = "-id"
+
+    def get_queryset(self):
+        latest_actions_subquery = ProductAction.objects.filter(
+            product_id=OuterRef("id")
+        ).values("product_id").annotate(
+            latest_action=Max("created_at")
+        ).values("latest_action")
+        
+        queryset = Product.objects.annotate(
+            latest_action=latest_actions_subquery
+        ).order_by("-latest_action").distinct()
+        
+        return queryset
+
+        
     
 class ProductSearchView(LoginRequiredMixin, ListView):
     model = Product
@@ -58,7 +72,17 @@ class ProductSearchView(LoginRequiredMixin, ListView):
             return results
         
         else:
-            return Product.objects.all()
+            latest_actions_subquery = ProductAction.objects.filter(
+                product_id=OuterRef("id")
+            ).values("product_id").annotate(
+                latest_action=Max("created_at")
+            ).values("latest_action")
+            
+            queryset = Product.objects.annotate(
+                latest_action=latest_actions_subquery
+            ).order_by("-latest_action").distinct()
+            
+            return queryset
 
 class ProductInformationView(LoginRequiredMixin, DetailView):
     model = Product
@@ -101,19 +125,23 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
                 form.save()
                 
                 changed_fields = {}
+                ignore_fields = ["min_stock_quantity", "max_stock_quantity", "product_status"]
                 for field in form.fields:
-                    original_value = getattr(original_instance, field)
-                    modified_value = getattr(instance, field)
+                    if field not in ignore_fields:
+                        original_value = getattr(original_instance, field)
+                        modified_value = getattr(instance, field)
                     
-                    if original_value != modified_value:
-                        changed_fields[field] = {
-                            "original_value": original_value,
-                            "modified_value": modified_value
-                        }
+                        if original_value != modified_value:
+                            changed_fields[field] = {
+                                "original_value": original_value,
+                                "modified_value": modified_value
+                            }
+                        
+                print(changed_fields)
                 
                 if changed_fields:
                     product_action = ProductAction.objects.create(
-                    product = form.instance,
+                    product = instance,
                     action = "edit",
                     created_at = timezone.now(),
                     created_by = self.request.user,

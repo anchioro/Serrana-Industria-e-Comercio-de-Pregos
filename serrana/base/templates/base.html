@@ -56,6 +56,20 @@
                         </a>
                     </li>
                 </ul>
+
+                <ul class="nav nav-pills flex-column">
+                    <li>
+                        <a href="{% if request.user.is_authenticated %}
+                            {% url "users:user" pk=request.user.pk %}
+                        {% else %}
+                            {% url "users:login" %}
+                        {% endif %}" class="nav-link link-dark">
+                            <i class="bi bi-gear"></i>
+                            Configurações
+                        </a>
+                    </li>
+                </ul>
+
                 <hr>
                 <ul class="nav nav-pills d-flex justify-content-between  align-items-center">
                     <li>
@@ -75,16 +89,22 @@
                         </form>
                     </li>
                     <li>
-                        {% if request.user.is_authenticated %}
-                            {% if request.user.get_full_name %}
-                                {{ request.user.get_full_name | title  }}
-                            {% else %}
-                                {{ request.user.username | title }}
-                            {% endif %}
+                        <a href="{% if request.user.is_authenticated %}
+                            {% url "users:user" pk=request.user.pk %}
                         {% else %}
-                            Visitante
-                        {% endif %}
-                        <i class="bi bi-person-circle"></i>
+                            {% url "users:login" %}
+                        {% endif %}" class="nav-link link-dark">
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.get_full_name %}
+                                    {{ request.user.get_full_name|title }}
+                                {% else %}
+                                    {{ request.user.username|title }}
+                                {% endif %}
+                            {% else %}
+                                Visitante
+                            {% endif %}
+                            <i class="bi bi-person-circle"></i>
+                        </a>
                     </li>
                 </ul>
           </div>
@@ -116,12 +136,23 @@
                                 Produtos
                             </a>
                         </li>
+
                         <li>
                             <a href="{% url "users:index" %}" class="nav-link link-dark">
                                 <i class="bi bi-people"></i>
                                 Usuários
                             </a>
                         </li>
+                    </ul>
+
+                    <ul class="nav nav-pills flex-column">
+                        <li>
+                            <a href="{% if request.user.is_authenticated %}{% url "users:user" pk=request.user.pk %}{% else %}{% url "users:login" %}{% endif %}" class="nav-link link-dark">
+                                <i class="bi bi-gear"></i>
+                                Configurações
+                            </a>
+                        </li>
+                        
                     </ul>
 
                     <hr>
@@ -143,16 +174,22 @@
                             </form>
                         </li>
                         <li>
-                            {% if request.user.is_authenticated %}
-                                {% if request.user.get_full_name %}
-                                    {{ request.user.get_full_name | title }}
-                                {% else %}
-                                    {{ request.user.username | title }}
-                                {% endif %}
+                            <a href="{% if request.user.is_authenticated %}
+                                {% url "users:user" pk=request.user.pk %}
                             {% else %}
-                                Visitante
-                            {% endif %}
-                            <i class="bi bi-person-circle"></i>
+                                {% url "users:login" %}
+                            {% endif %}" class="nav-link link-dark">
+                                {% if request.user.is_authenticated %}
+                                    {% if request.user.get_full_name %}
+                                        {{ request.user.get_full_name|title }}
+                                    {% else %}
+                                        {{ request.user.username|title }}
+                                    {% endif %}
+                                {% else %}
+                                    Visitante
+                                {% endif %}
+                                <i class="bi bi-person-circle"></i>
+                            </a>
                         </li>
                     </ul>
                 </nav>

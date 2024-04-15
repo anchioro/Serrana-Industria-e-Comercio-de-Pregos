@@ -45,19 +45,21 @@ $(document).ready(function() {
         });
     };
 
-    $(window).on('resize scroll', function() {
+    $(window).on("resize scroll", function() {
         checkLocation();
     });
 
+    // Add the color theme to the currently seleted tab of navbar
     $.each($menuItems, (_, menu) => {
         const $menu = $(menu);
 
         if ($menu.attr("href") === currentLocation) {
-            $menu.attr("class", "nav-link link-dark color-theme");
+            $menu.addClass("color-theme");
         } else {
-            $menu.attr("class", "nav-link link-dark");
+            $menu.removeClass("color-theme");
         }
     });
 
+    // Call the fuction to set  the initial position for the logo text
     checkLocation();
 });
