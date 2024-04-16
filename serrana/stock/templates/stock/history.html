@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+    {{ product.product_name }}
+{% endblock title %}
+
+{% block content %}
+    <a href="{% url "stock:action" slug=product.slug %}" class="btn btn-sticky-bottom color-theme" title="Registrar nova ação">
+        <i class="bi bi-plus"></i>
+    </a>
+
+    <h2 class="mb-3">
+        {{ product.product_name }}
+    </h2>
+
+    <hr>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h4>Informações gerais</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Nome:</span>
+                        {{ product.product_name }}
+                    </div>
+            
+                    <div class="list-group-item">
+                        <span class="fw-bold">Bitola:</span>
+                        {{ product.product_diameter }}
+                    </div>
+            
+                    <div class="list-group-item">
+                        <span class="fw-bold">Estoque:</span>
+                        {{ product.product_quantity }}
+                    </div>
+                </div>
+                <div class="my-1">
+                    <a href="{% url "stock:information" slug=product.slug %}">Mais informações de {{ product.product_name }} <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <h3>Histórico</h3>
+    </div>
+
+    <div class="table-responsive text-center text-nowrap mb-5">
+        <table class="table table-striped table-sm table-hover">
+            <thead>
+                <tr>
+                    <th>Ação</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Responsável</th>
+                    <th>Quantidade</th>
+                    <th>Família</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                {% for action in page_obj %}
+                    <tr>
+                        <td>
+                            {% if action.action == "creation" %}Criação{% endif %}
+                            {% if action.action == "entry" %}Entrada{% endif %}
+                            {% if action.action == "exit" %}Saída{% endif %}
+                            {% if action.action == "edit" %}Edição{% endif %}
+                        </td>
+                        <td>{{ action.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ action.created_at|time:"H:i" }}</td>
+                        <td>{% if action.created_by|get_full_name_from_username %}
+                                {{ action.created_by|get_full_name_from_username }}
+                            {% else %}
+                                {{ action.created_by }}
+                            {% endif %}</td>
+                        <td>
+                            {% if action.action == "entry" %}
+                            <span class="text-success">+{{ action.quantity|stringformat:"02d" }}</span>
+                            {% endif %}
+                            {% if action.action == "exit" %}
+                            <span class="text-danger">-{{ action.quantity|stringformat:"02d" }}</span>
+                            {% endif %}
+                            {% if action.action == "creation" %}---{% endif %}
+                            {% if action.action == "edit" %}---{% endif %}
+                        </td>
+                        <td>
+                            {% if action.family %}
+                                {{ action.family }}
+                            {% else %}
+                                ---
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if action.action == "edit" %}
+                                <button class="btn btn-primary btn-sm" style="width:50px" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ action.id }}" aria-expanded="false" aria-controls="collapse{{ action.id }}">
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                            {% else %}
+                                <i class="bi bi-ban"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="collapse-row"></tr>
+                    <tr class="collapse-content collapse-row text-start ">
+                        <td colspan="7">
+                            <div class="collapse my-2" id="collapse{{ action.id }}">
+                                <div class="card card-body">
+                                    {% for log in change_log %}
+                                        {% if log.stock_action_id == action.id %}
+                                            <div class="row">
+                                                <div class="col">
+                                                    {% with field_display_name=log_field_display_names|get:log.field_name %}
+                                                        {% if field_display_name %}
+                                                            <span class="fw-bold">{{ field_display_name }}</span>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                    
+                                                    {% if log.field_name != "location_description" %}
+                                                        trocado de <span class="fw-medium text-bg-danger">{{ log.original_value }}</span> para <span class="fw-medium text-bg-success">{{ log.modified_value }}</span>.
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Nenhum histórico disponível.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "partials/_paginator.html" %}
+    </div>
+
+{% endblock content %}
+

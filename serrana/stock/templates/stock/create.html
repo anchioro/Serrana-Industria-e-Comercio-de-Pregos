@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Cadastro de Matéria-Prima
+{% endblock title %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>  
+{% endblock head %}
+
+{% block content %}
+    <h2>Cadastro de Matéria-Prima</h2>
+    <form method="post">
+        {% include "partials/_form_non_field_errors.html" %}
+        {% csrf_token %}
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.product_name|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.product_diameter|as_crispy_field }}
+            </div>
+
+            <div class="col">
+                {{ form.product_quantity|as_crispy_field }}
+            </div>
+        </div>
+
+        <h3>Localização do produto no estoque físico</h3>
+
+        <div class="row mb-3">
+            {{ form.storage_location|as_crispy_field }}
+        </div>
+
+        <div class="row mb-3">
+            {{ form.location_description|as_crispy_field }}
+        </div>
+        {% include "partials/_submit_button.html" %}
+    </form>
+{% endblock content %}

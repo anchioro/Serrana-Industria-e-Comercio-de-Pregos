@@ -2,7 +2,7 @@ from django import forms
 from products.models.product import ProductAction
 from django.core.exceptions import ValidationError
 
-class ActionForm(forms.ModelForm):
+class ProductActionForm(forms.ModelForm):
     class Meta:
         model = ProductAction
         

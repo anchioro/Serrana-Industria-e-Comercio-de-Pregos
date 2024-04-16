@@ -1,6 +1,5 @@
 from django.urls import path
 from .views.product_management import ProductListView, ProductUpdateView, ProductCreateView, ProductSearchView, ProductDeleteView, ProductHistoryView, ProductInformationView, ProductActionView
-from django.views.generic import RedirectView
 
 app_name = "products"
 urlpatterns = [

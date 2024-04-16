@@ -24,5 +24,6 @@ urlpatterns = [
     path("home/", HomeView.as_view(), name="home"),
     path("", RedirectView.as_view(pattern_name="home", permanent=False)),
     path("produtos/", include("products.urls")),
+    path("estoque/", include("stock.urls")),
     path("", include("users.urls")),
 ]
