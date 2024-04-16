@@ -57,7 +57,7 @@ def create_product_action(sender, instance, created, **kwargs):
 
         ProductAction.objects.create(
             product=instance,
-            action='creation',
+            action="creation",
             created_at=timezone.now(),
             created_by=user,
         )
@@ -71,7 +71,7 @@ class ProductAction(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     quantity = models.IntegerField(default=0, validators=[MinValueValidator(1)])
-    invoice = models.IntegerField(unique=True, null=True)
+    invoice = models.IntegerField(unique=True, null=True)  # Need to be changed to the Foreign Key of the "pedidos" when action is "exit"
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
