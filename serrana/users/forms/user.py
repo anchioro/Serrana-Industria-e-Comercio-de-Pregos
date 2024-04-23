@@ -43,14 +43,13 @@ class UserForm(forms.ModelForm):
             user.set_password(new_password)
         
         if self.by_admin:
-            print("ADMIN")
             user.is_active = self.cleaned_data.get("is_active")
             user.is_staff = self.cleaned_data.get("is_staff")
         else:
-            print("USER")
-            old_user = User.objects.get(pk=user.pk)
-            user.is_active = old_user.is_active
-            user.is_staff = old_user.is_staff
+            if not self.instance._state.adding:
+                old_user = User.objects.get(pk=user.pk)
+                user.is_active = old_user.is_active
+                user.is_staff = old_user.is_staff
             
         if commit:
             user.save()
