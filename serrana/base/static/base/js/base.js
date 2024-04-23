@@ -16,7 +16,7 @@ $(document).ready(function() {
         $(targetId).closest(".collapse-row").toggle();
     });
 
-    // Disable the placeholder text in selection field of actions/action.html
+    // Disable the placeholder text in selection field of products/action.html
     $idActionOption.text("Selecione uma opção");
     $idAction.on("click", function() {
         $(this).find($idActionOption).prop("disabled", true);

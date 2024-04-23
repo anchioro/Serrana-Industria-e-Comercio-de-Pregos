@@ -18,7 +18,7 @@ class Stock(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
-        return f"{self.product_name}, {self.product_codebar}, {self.product_diameter}, {self.product_weight}, {self.storage_location}"
+        return f"{self.product_name}, {self.product_codebar}, {self.product_diameter}, {self.storage_location}"
         
     def save(self, *args, **kwargs):
         slug_text = f"{self.product_name} {self.storage_location}"

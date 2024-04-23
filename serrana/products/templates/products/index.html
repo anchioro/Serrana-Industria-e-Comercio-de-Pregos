@@ -31,7 +31,7 @@
                     <th>Estoque Mínimo</th>
                     <th>Estoque Recomendado</th>
                     <th class="text-start">Status</th>
-                    <th>Ações</th>
+                    <th class="text-center">Ações</th>
                 </tr>
             </thead>
 
@@ -83,7 +83,7 @@
                         </td>
 
                         <td>
-                            <div class="d-flex gap-1">
+                            <div class="d-flex gap-1 justify-content-center">
                                 {% if request.user.is_staff %}
                                     {% comment %} Delete {% endcomment %}
                                     <form method="post" action="{% url "products:delete" product.id %}">

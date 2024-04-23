@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    {{ family.family_manager }}
+{% endblock title %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+{% endblock head %}
+
+{% block content %}
+    <h2 class="mb-3">
+        {{ family.family_manager }}
+    </h2>
+
+    <hr>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h4>Informações gerais</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Nome:</span>
+                        {{ family.family_manager }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Endereço</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Cidade:</span>
+                        {{ family.city }} - {{ family.state }}
+                    </div>
+
+                    <div class="list-group-item">
+                        <span class="fw-bold">Endereço:</span>
+                        {% if family.number %}
+                            {{ family.address }} N° {{ family.number }}
+                        {% else %}
+                            {{ family.address }} SN
+                        {% endif %}
+                    </div>
+
+                    <div class="list-group-item">
+                        <span class="fw-bold">Descrição:</span>
+                        {% if not address_description %}
+                            Nenhuma descrição fornecida.
+                        {% else %}
+                            {{ address_description }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Outras informações</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Última entrega:</span>
+                        {% if family.last_delivery %}
+                            {{ family.last_delivery }}
+                        {% else %}
+                            Nenhuma entrega realizada.
+                        {% endif %}
+                    </div>
+
+                    <div class="list-group-item">
+                        <span class="fw-bold">Último pagamento:</span>
+                        {% if family.last_payment %}
+                            {{ family.last_payment }}
+                        {% else %}
+                            Nenhum pagamento realizado.
+                        {% endif %}
+                    </div>
+            
+                    <div class="list-group-item">
+                        <span class="fw-bold">Ativo:</span>
+                        {% if family.is_active %}
+                            <i class="bi bi-check-circle"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+{% endblock content %}

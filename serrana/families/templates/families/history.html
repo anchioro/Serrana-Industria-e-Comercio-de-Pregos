@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+    {{ family.family_manager }}
+{% endblock title %}
+
+{% block content %}
+    <a href="{% url "families:action" slug=family.slug %}" class="btn btn-sticky-bottom color-theme" title="Registrar nova ação">
+        <i class="bi bi-plus"></i>
+    </a>
+
+    <h2 class="mb-3">
+        {{ family.family_manager }}
+    </h2>
+
+    <hr>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h4>Informações gerais</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Nome:</span>
+                        {{ family.family_manager }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Endereço</h4>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <span class="fw-bold">Cidade:</span>
+                        {{ family.city }} - {{ family.state }}
+                    </div>
+
+                    <div class="list-group-item">
+                        <span class="fw-bold">Endereço:</span>
+                        {% if family.number %}
+                            {{ family.address }} N° {{ family.number }}
+                        {% else %}
+                            {{ family.address }} SN
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="my-1">
+            <a href="{% url "families:information" slug=family.slug %}">Mais informações de {{ family.family_manager }} <i class="bi bi-arrow-right"></i></a>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <h3>Histórico</h3>
+    </div>
+
+    <div class="table-responsive text-center text-nowrap mb-5">
+        <table class="table table-striped table-sm table-hover">
+            <thead>
+                <tr>
+                    <th>Responsável</th>
+                    <th>Data</th>
+                    <th>Produto</th>
+                    <th>Embalagem</th>
+                    <th>Prego</th>
+                    <th>Borracha</th>
+                    <th>Metal</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                {% for action in page_obj %}
+                    <tr>
+                        <td>{% if action.created_by|get_full_name_from_username %}
+                            {{ action.created_by|get_full_name_from_username }}
+                        {% else %}
+                            {{ action.created_by }}
+                        {% endif %}
+                        </td>
+                    
+                        <td>{{ action.created_at|date:"d/m/Y" }}</td>
+
+                        <td>{{ action.product }}</td>
+
+                        <td>{{ action.product_packing }}</td>
+
+                        <td>{{ action.product_quantity }}</td>
+
+                        <td>{{ action.rubber_quantity }}</td>
+
+                        <td>{{ action.metal_quantity }}</td>
+
+                        <td>
+                            <form method="post" action="{% url 'families:toggle_completion' action.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm {% if action.is_finished %}btn-success{% else %}btn-danger{% endif %}">
+                                    {% if action.is_finished %}
+                                        Concluído
+                                    {% else %}
+                                        Pendente
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+                        
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center">Nenhum histórico disponível.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "partials/_paginator.html" %}
+    </div>
+
+{% endblock content %}
+
