@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Registro de Ações
+{% endblock title %}
+
+{% block content %}
+    <h2>Registrar ação de {{ family.family_manager }}</h2>
+    <form method="post">
+        {% include "partials/_form_non_field_errors.html" %}
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.product|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.product_packing|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.product_quantity|as_crispy_field }}
+            </div>
+            <div class="col">
+                {{ form.rubber_quantity|as_crispy_field }}
+            </div>
+            <div class="col">
+                {{ form.metal_quantity|as_crispy_field }}
+            </div>
+        </div>
+
+        {% include "partials/_submit_button.html" %}
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            const $idProduct = $("#id_product");
+            const $idProductPacking = $("#id_product_packing");
+            const $idProductPackingOption = $idProductPacking.find("option[value='']");
+            const $idProductOption = $idProduct.find("option[value='']");
+        
+            $idProductOption.text("Selecione uma opção").prop("disabled", true);
+            $idProductPackingOption.text("Selecione uma opção").prop("disabled", true);
+        
+            $idProduct.on("click", function() {
+                $(this).find($idProductOption).prop("disabled", true);
+            });
+           
+            $idProductPacking.change(function() {
+                const selectedValue = $(this).val();
+                if (!selectedValue) {
+                   
+                    $idProduct.val('').find($idProductOption).prop("disabled", true);
+                }
+            });
+           
+            if (!$idProductPacking.val()) {
+                $idProduct.val('').find($idProductOption).prop("disabled", true);
+            }
+           
+            $idProduct.change(function() {
+                const productId = $(this).val();
+                const placeholderOption = $idProductPackingOption.clone();
+        
+                $idProductPacking.empty().append(placeholderOption);
+                $idProductPacking.append($("<option></option>").attr("value", productId + " | 1 Kg").text(productId + " | 1 Kg"));
+                $idProductPacking.append($("<option></option>").attr("value", productId + " | 500g").text(productId + " | 500g"));
+            });
+        });
+    </script>
+    
+
+    
+    
+{% endblock content %}

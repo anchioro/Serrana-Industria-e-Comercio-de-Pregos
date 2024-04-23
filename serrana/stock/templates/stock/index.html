@@ -27,7 +27,7 @@
                     <th>Bitola</th>
                     <th>Localização</th>
                     <th>Quantidade</th>
-                    <th>Ações</th>
+                    <th class="text-center">Ações</th>
                 </tr>
             </thead>
 
@@ -52,7 +52,7 @@
                         </td>
 
                         <td>
-                            <div class="d-flex gap-1">
+                            <div class="d-flex gap-1 justify-content-center">
                                 {% if request.user.is_staff %}
                                     {% comment %} Delete {% endcomment %}
                                     <form method="post" action="{% url "stock:delete" product.id %}">

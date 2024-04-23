@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Edição de Família
+{% endblock title %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+{% endblock head %}
+
+{% block content %}
+    <h2>Edição de Família</h2>
+    <form method="post">
+        {% include "partials/_form_non_field_errors.html" %}
+        {% csrf_token %}
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.family_manager|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-2 col">
+                {{ form.zip_code|as_crispy_field }}
+            </div>
+
+            <div class="col">
+                {{ form.state|as_crispy_field }}
+            </div>
+
+            <div class="col">
+                {{ form.city|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.address|as_crispy_field }}
+            </div>
+
+            <div class="col-sm-2 col-4">
+                {{ form.number|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.address_description|as_crispy_field }}
+            </div>
+        </div>
+
+        {{ form.is_active|as_crispy_field }}
+
+        {% include "partials/_submit_button.html" %}
+    </form>
+{% endblock content %}
