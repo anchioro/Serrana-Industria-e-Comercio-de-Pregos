@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block title %}
     Famílias
 {% endblock title %}
@@ -89,6 +90,122 @@
                                     <a href="{% url "families:update" family.slug %}" class="btn btn-warning btn-sm" title="editar produto"><i class="bi bi-pencil"></i></a>
                                 {% endif %}
                                 
+                                {% comment %} Information {% endcomment %}
+                                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#familyContact{{ family.id }}">
+                                    <i class="bi bi-info-circle"></i>
+                                </button>
+                            
+                                <div class="modal fade" id="familyContact{{ family.id }}" tabindex="-1" aria-labelledby="familyContactLabel{{ family.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="familyContactLabel{{ family.id }}">
+                                                    <h3>
+                                                        Família de {{ family.family_manager }}
+                                                    </h3>
+                                                </h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h5 class="text-start">Informações de contato</h5>
+                                                <div class="table-responsive text-nowrap">
+                                                    <table class="table table-bordered table-sm">
+                                                        <thead>
+                                                            <th>Proprietário</th>
+                                                            <th>Telefone</th>
+                                                            <th>E-mail</th>
+                                                            <th>CPF</th>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            {% for contact_info in family.familycontactinformation_set.all %}
+                                                                <td>
+                                                                    {{ contact_info.person_name }}
+                                                                </td>
+
+                                                                <td>
+                                                                    {% if contact_info.phone %}
+                                                                        {{ contact_info.phone }}
+                                                                    {% else %}
+                                                                        ---
+                                                                    {% endif %}
+                                                                </td>
+
+                                                                <td>
+                                                                    {% if contact_info.email %}
+                                                                        {{ contact_info.email }}
+                                                                    {% else %}
+                                                                        ---
+                                                                    {% endif %}
+                                                                </td>
+
+                                                                <td>
+                                                                    {% if contact_info.cpf %}
+                                                                        {{ contact_info.cpf }}
+                                                                    {% else %}
+                                                                        ---
+                                                                    {% endif %}
+                                                                </td>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <h5 class="text-start">Opções de pagamento</h5>
+                                                <div class="table-responsive text-nowrap">
+                                                    <table class="table table-bordered table-sm">
+                                                        <thead>
+                                                            <th>Proprietário</th>
+                                                            <th>Telefone</th>
+                                                            <th>E-mail</th>
+                                                            <th>CPF</th>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            {% for contact_info in family.familycontactinformation_set.all %}
+                                                                <td>
+                                                                    {{ contact_info.person_name }}
+                                                                </td>
+
+                                                                <td>
+                                                                    {% if contact_info.is_valid_phone_for_payment %}
+                                                                        <span class="text-success">É uma forma de pagamento válida.</span>
+                                                                    {% else %}
+                                                                        <span class="text-danger">Não é uma forma de pagamento válida.</span>
+                                                                    {% endif %}
+                                                                </td>
+
+                                                                <td>
+                                                                    {% if contact_info.is_valid_email_for_payment %}
+                                                                        <span class="text-success">É uma forma de pagamento válida.</span>
+                                                                    {% else %}
+                                                                        <span class="text-danger">Não é uma forma de pagamento válida.</span>
+                                                                    {% endif %}
+                                                                </td>
+
+                                                                <td>
+                                                                    {% if contact_info.is_valid_cpf_for_payment %}
+                                                                        <span class="text-success">É uma forma de pagamento válida.</span>
+                                                                    {% else %}
+                                                                        <span class="text-danger">Não é uma forma de pagamento válida.</span>
+                                                                    {% endif %}
+                                                                </td>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end">
+                                                    <a href="#" class="btn btn-primary" title="adicionar novo contato">Adicionar novo contato <i class="bi bi-chevron-right"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
                                 {% comment %} Historic {% endcomment %}
                                 <a href="{% url "families:history" family.slug %}" style="width:50px" class="btn btn-primary btn-sm" title="histórico produto"><i class="bi bi-arrow-right"></i></a>
                             </div>    
