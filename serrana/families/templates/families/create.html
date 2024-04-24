@@ -50,6 +50,48 @@
             </div>
         </div>
 
+        <h4>Informações de contato</h4>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ contact_form.person_name|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ contact_form.email|as_crispy_field }}
+            </div>
+        </div> 
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ contact_form.phone|as_crispy_field }}
+            </div>
+            <div class="col">
+                {{ contact_form.cpf|as_crispy_field }}
+            </div>
+        </div>
+
+        <h4>Pagamento</h4>
+        <div class="form-text mb-3">
+            Marcar as opções que se aplicam:
+        </div>
+
+        {{ contact_form.is_valid_email_for_payment|as_crispy_field }}
+        {{ contact_form.is_valid_phone_for_payment|as_crispy_field }}
+        {{ contact_form.is_valid_cpf_for_payment|as_crispy_field }}
+
         {% include "partials/_submit_button.html" %}
     </form>
+
+    <script>
+        $(document).ready(function() {
+            $("#id_zip_code").mask("00000-000");
+
+            $("#id_cpf").mask("000.000.000-00", {reverse: true});
+
+            $("#id_phone").mask("(00) 0 0000-0000");
+        });
+    </script>
 {% endblock content %}

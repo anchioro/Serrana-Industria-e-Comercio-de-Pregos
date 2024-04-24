@@ -1,5 +1,7 @@
 from django.urls import path
-from .views.family_management import FamilyListView, FamilyUpdateView, FamilyCreateView, FamilySearchView, FamilyDeleteView, FamilyInformationView, FamilyActionView, FamilyHistoryView, toggle_completion
+from .views.family_management import FamilyListView, FamilyUpdateView, FamilyCreateView, FamilySearchView, FamilyDeleteView, FamilyInformationView, FamilyActionView, FamilyHistoryView
+# from .views.family_management import FamilyContactCreateView, FamilyContactUpdateView, FamilyContactDeleteView
+from .views.family_management import toggle_completion
 
 app_name = "families"
 urlpatterns = [
@@ -11,5 +13,8 @@ urlpatterns = [
     path("<slug:slug>/action/", FamilyActionView.as_view(), name="action"),
     path("<slug:slug>/", FamilyInformationView.as_view(), name="information"),
     path("<slug:slug>/history/", FamilyHistoryView.as_view(), name="history"),
-    path('toggle_completion/<int:action_id>/', toggle_completion, name='toggle_completion'),
+    # path("<slug:slug>/contact/cadastro/", FamilyContactCreateView.as_view(), name="contact-create"),
+    # path("<slug:slug>/contact/edit/", FamilyContactUpdateView.as_view(), name="contact-update"),
+    # path("<slug:slug>/contact/<int:pk>/delete/", FamilyContactDeleteView.as_view(), name="contact-delete"),
+    path("toggle_completion/<int:action_id>/", toggle_completion, name="toggle_completion"),
 ]

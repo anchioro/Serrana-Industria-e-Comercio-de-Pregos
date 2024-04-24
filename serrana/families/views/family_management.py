@@ -1,12 +1,11 @@
 from django.db.models import Q, Max, OuterRef
 from django.shortcuts import get_object_or_404, redirect
-from families.models.family import Family, FamilyAction, FamilyContactInformation
-from families.forms.family import FamilyForm
+from families.models.family import Family, FamilyAction
+from families.forms.family import FamilyForm, FamilyContactInformationForm
 from families.forms.action import FamilyActionForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
 
 
 # Create your views here.
@@ -72,14 +71,38 @@ class FamilyInformationView(LoginRequiredMixin, DetailView):
 class FamilyCreateView(LoginRequiredMixin, CreateView):
     model = Family
     form_class = FamilyForm
+    contact_form_class = FamilyContactInformationForm
     template_name = "families/create.html"
     success_url = reverse_lazy("families:index")
     
-    def form_valid(self, form):
-        print("válido")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "form" not in context:
+            context["form"] = self.form_class(self.request.GET)
+        if "contact_form" not in context:
+            context["contact_form"] = self.contact_form_class(self.request.GET)
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form(self.form_class)
+        contact_form = self.get_form(self.contact_form_class)
+        if form.is_valid() and contact_form.is_valid():
+            return self.form_valid(form, contact_form)
+        else:
+            return self.form_invalid(form, contact_form)
+
+    def form_valid(self, form, contact_form):
         form.instance.created_by = self.request.user
         form.instance.is_active = True
+        self.object = form.save()
+        contact_form.instance.family = self.object
+        contact_form.save()
         return super().form_valid(form)
+
+    def form_invalid(self, form, contact_form):
+        return self.render_to_response(
+            self.get_context_data(form=form, contact_form=contact_form))
     
 class FamilyUpdateView(LoginRequiredMixin, UpdateView):
     model = Family

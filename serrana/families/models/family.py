@@ -9,7 +9,7 @@ from stock.models.stock import Stock
 class Family(models.Model):
     family_manager = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, blank=True)
-    zip_code = models.CharField(max_length=8)
+    zip_code = models.CharField(max_length=20)
     state = models.CharField(max_length=2)
     city = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
@@ -86,10 +86,10 @@ class FamilyAction(models.Model):
         
 class FamilyContactInformation(models.Model):
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
-    person_name = models.TextField()
-    phone = models.CharField(max_length=11)
-    cpf = models.CharField(max_length=11, unique=True)
-    email = models.EmailField()
+    person_name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    cpf = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
     is_valid_phone_for_payment = models.BooleanField(default=False)
     is_valid_cpf_for_payment = models.BooleanField(default=False)
     is_valid_email_for_payment = models.BooleanField(default=False)
