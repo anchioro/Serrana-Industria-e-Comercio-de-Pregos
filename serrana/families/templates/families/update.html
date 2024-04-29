@@ -21,9 +21,7 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-sm-2 col">
-                {{ form.zip_code|as_crispy_field }}
-            </div>
+            {% include "partials/_cep_field.html" %}
 
             <div class="col">
                 {{ form.state|as_crispy_field }}

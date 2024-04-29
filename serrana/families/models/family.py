@@ -72,6 +72,7 @@ class FamilyAction(models.Model):
     metal_quantity = models.IntegerField(default=0)
     is_finished = models.BooleanField(default=False)
     status = models.CharField(max_length=255, default="Pendente")
+    finished_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

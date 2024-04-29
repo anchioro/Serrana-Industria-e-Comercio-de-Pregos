@@ -15,3 +15,7 @@ def get_full_name_from_username(username):
 @register.filter
 def get(d, k):
     return d.get(k, "")
+
+@register.filter(name="get_item")
+def get_item(dictionary, key):
+    return dictionary.get(key, "")

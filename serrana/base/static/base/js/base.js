@@ -60,6 +60,11 @@ $(document).ready(function() {
         }
     });
 
+    // jmask plugin to mask the phone, zip code and CPF fields
+    $("#id_phone").mask("(00) 0 0000-0000");
+    $("#id_zip_code").mask("00000-000");
+    $("#id_cpf").mask("000.000.000-00");
+
     // Call the fuction to set  the initial position for the logo text
     checkLocation();
 });

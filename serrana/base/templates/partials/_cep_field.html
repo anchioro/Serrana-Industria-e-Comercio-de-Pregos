@@ -1,0 +1,92 @@
+<div class="col-sm-2 col">
+    <div class="mb-3">
+        <label for="id_zip_code" class="form-label">CEP*</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="id_zip_code" name="zip_code" aria-describedby="basic-addon3 basic-addon4" placeholder="CEP" value="{{ object.zip_code }}">
+            <span class="input-group-text" id="map-icon"><i class="bi bi-geo-alt"></i></span>
+            <span class="input-group-text" id="loading-spinner" style="display: none;"><i class="bi bi-arrow-clockwise spin"></i></span>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .spin {
+        animation: spin 1s linear infinite;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        const $stateInput = $("#id_state");
+        const $cityInput = $("#id_city");
+        const $addressInput = $("#id_address");
+        const $mapIcon = $("#map-icon");
+        const $loadingSpinner = $("#loading-spinner");
+
+        $("#id_zip_code").on("blur", function() {
+            const zip_code = $(this).val();
+
+            if (zip_code.trim() !== "") {
+                $stateInput.prop("disabled", true);
+                $cityInput.prop("disabled", true);
+                $addressInput.prop("disabled", true);
+        
+                $mapIcon.hide();
+                $loadingSpinner.show();
+
+                $.ajax({
+                    url: "https://brasilapi.com.br/api/cep/v1/" + zip_code,
+                    method: "GET",
+                    success: function(response) {
+                        $stateInput.val(response.state);
+                        $cityInput.val(response.city);
+                        $addressInput.val(response.street);
+    
+                        if (response.state === "") {
+                            $("#id_state").focus();
+                        }
+                        if (response.city === "") {
+                            $("#id_city").focus();
+                        }
+                        if (response.street === "") {
+                            $("#id_address").focus();
+                        }
+    
+                        if (response.state && response.city && response.street) {
+                            $("#id_number").focus();
+                        }
+
+                        $loadingSpinner.hide();
+                        $mapIcon.show();
+                    },
+                    error: function(xhr, status, error) {
+                        $stateInput.val("");
+                        $cityInput.val("");
+                        $addressInput.val("");
+    
+                        $("#id_state").focus();
+
+                        $loadingSpinner.hide();
+                        $mapIcon.show();
+                    },
+                    complete: function() {
+                        $stateInput.prop("disabled", false);
+                        $cityInput.prop("disabled", false);
+                        $addressInput.prop("disabled", false);
+                    }
+                });
+            }
+        });
+
+        $("#submitButton").on("click", function() {
+            $stateInput.prop("disabled", false);
+            $cityInput.prop("disabled", false);
+            $addressInput.prop("disabled", false);
+        });
+    });
+</script>
