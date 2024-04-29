@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Cadastro de Contato
+{% endblock title %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+{% endblock head %}
+
+{% block content %}
+    <h2>Cadastro de Contato</h2>
+    <form method="post">
+        {% include "partials/_form_non_field_errors.html" %}
+        {% csrf_token %}
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.person_name|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.email|as_crispy_field }}
+            </div>
+        </div> 
+
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.phone|as_crispy_field }}
+            </div>
+            <div class="col">
+                {{ form.cpf|as_crispy_field }}
+            </div>
+        </div>
+
+        <h4>Pagamento</h4>
+        <div class="form-text mb-3">
+            Marcar as opções que se aplicam:
+        </div>
+
+        {{ form.is_valid_email_for_payment|as_crispy_field }}
+        {{ form.is_valid_phone_for_payment|as_crispy_field }}
+        {{ form.is_valid_cpf_for_payment|as_crispy_field }}
+
+        {% include "partials/_submit_button.html" %}
+    </form>
+{% endblock content %}

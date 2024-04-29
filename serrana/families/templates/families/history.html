@@ -6,9 +6,11 @@
 {% endblock title %}
 
 {% block content %}
-    <a href="{% url "families:action" slug=family.slug %}" class="btn btn-sticky-bottom color-theme" title="Registrar nova ação">
-        <i class="bi bi-plus"></i>
-    </a>
+    {% if family.is_active %}
+        <a href="{% url "families:action" slug=family.slug %}" class="btn btn-sticky-bottom color-theme" title="Registrar nova ação">
+            <i class="bi bi-plus"></i>
+        </a>
+    {% endif %}
 
     <h2 class="mb-3">
         {{ family.family_manager }}
@@ -96,15 +98,21 @@
                         <td>{{ action.metal_quantity }}</td>
 
                         <td>
-                            <form method="post" action="{% url 'families:toggle_completion' action.pk %}">
+                            <form method="post" action="{% url "families:toggle_completion" action.pk %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-sm {% if action.is_finished %}btn-success{% else %}btn-danger{% endif %}">
-                                    {% if action.is_finished %}
+                                {% if action.status == "Pago" %}
+                                    <span class="btn btn-sm btn-success">
                                         Concluído
-                                    {% else %}
-                                        Pendente
-                                    {% endif %}
-                                </button>
+                                    </span>
+                                {% else %}
+                                    <button type="submit" class="btn btn-sm {% if action.is_finished %}btn-warning{% else %}btn-danger{% endif %}">
+                                        {% if action.is_finished %}
+                                            Finalizado
+                                        {% else %}
+                                            Pendente
+                                        {% endif %}
+                                    </button>
+                                {% endif %}
                             </form>
                         </td>
                         

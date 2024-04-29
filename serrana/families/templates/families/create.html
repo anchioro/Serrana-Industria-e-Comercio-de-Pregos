@@ -21,9 +21,7 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-sm-2 col">
-                {{ form.zip_code|as_crispy_field }}
-            </div>
+            {% include "partials/_cep_field.html" %}
 
             <div class="col">
                 {{ form.state|as_crispy_field }}
@@ -84,14 +82,4 @@
 
         {% include "partials/_submit_button.html" %}
     </form>
-
-    <script>
-        $(document).ready(function() {
-            $("#id_zip_code").mask("00000-000");
-
-            $("#id_cpf").mask("000.000.000-00", {reverse: true});
-
-            $("#id_phone").mask("(00) 0 0000-0000");
-        });
-    </script>
 {% endblock content %}
