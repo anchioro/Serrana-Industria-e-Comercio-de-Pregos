@@ -7,7 +7,7 @@
     <div class="container">
         <h2>Minhas Configurações</h2>
 
-        <ul class="nav nav-underline">
+        <ul class="nav nav-underline flex-nowrap">
             <li class="nav-item">
                 <a class="nav-link link-dark" data-bs-toggle="collapse" href="#profile" role="button" aria-expanded="true" aria-controls="profile">
                     Perfil <i class="bi bi-person"></i>
@@ -20,7 +20,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link link-dark" data-bs-toggle="collapse" href="#history" role="button" aria-expanded="false" aria-controls="history">
-                    Histórico de Atividades <i class="bi bi-clock-history"></i>
+                    Histórico <i class="bi bi-clock-history"></i>
                 </a>
             </li>
 
@@ -31,7 +31,7 @@
                     {% csrf_token %}
                     <button type="submit" class="nav-link link-dark">
                         <i class="bi bi-box-arrow-left"></i>
-                        Sair ou Encerrar Sessão
+                        <span class="d-none d-lg-inline">Sair ou Encerrar Sessão</span>
                     </button>
                 </form>
             </li>
@@ -40,17 +40,46 @@
 
         <div class="my-3 collapse show {% if section == "profile" %} show{% endif %}" id="profile">
             <div class="card card-body">
-                <h4>{{ request.user.get_full_name }}</h4>
+                <div class="d-flex">
+                    <h4>Informações da conta</h4>
+                    <span class="flex-grow-1"></span>
+                    <a href="{% url "users:user-update" pk=request.user.pk %}" class="nav-link link-dark">
+                        <div class="d-none d-lg-inline">
+                            <i class="bi bi-pencil-square"></i>
+                            Editar Informações da Conta
+                        </div>
+                        <div class="d-lg-none">
+                            <i class="bi bi-pencil-square fs-5"></i>
+                        </div>
+                    </a>
+                </div>
 
                 <ul class="list-group list-group-flush my-3">
-                    <li class="list-group-item">An item</li>
-                    <li class="list-group-item">A second item</li>
-                    <li class="list-group-item">A third item</li>
-                    <li class="list-group-item">A fourth item</li>
                     <li class="list-group-item">
-                        <a href="{% url "users:user-update" pk=request.user.pk %}">
-                            Editar Informações Pessoais
-                        </a>
+                        <span class="fw-medium">Nome:</span> {{ request.user.get_full_name }}
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-medium">Usuário:</span> {{ request.user.username }}
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-medium">Telefone:</span>
+                        {% if employee.phone %}
+                            {{ employee.phone }}
+                        {% else %}
+                            <span class="text-danger">
+                                <i class="bi bi-exclamation-triangle"></i> Sem número de telefone
+                            </span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-medium">E-mail:</span>
+                        {% if user.email %}
+                            {{ user.email }}
+                        {% else %}
+                            <span class="text-danger">
+                                <i class="bi bi-exclamation-triangle"></i> Sem endereço de e-mail
+                            </span>
+                        {% endif %}
                     </li>
                 </ul>
 
@@ -110,10 +139,22 @@
     
             $(".nav-link[data-bs-toggle='collapse']").click(function(event){
                 event.preventDefault();
+
+                var targetCollapse = $(this).attr("href");
+
+                if ($(this).hasClass("active") && (currentLocation.includes("section=config") || currentLocation.includes("section=history"))) {
+                    if (targetCollapse !== "#profile") {
+                        $(".nav-link[data-bs-toggle='collapse']").removeClass("active");
+                        $(".nav-link[data-bs-toggle='collapse'][href='#profile']").addClass("active");
+                        return;  
+                    } else{
+                        $("#profile").addClass("show");
+                        return;
+                    };
+                };
     
                 $(".nav-link[data-bs-toggle='collapse']").removeClass("active");
-    
-                var targetCollapse = $(this).attr("href");
+                
                 $(".collapse").collapse("hide");
                
                 if (!$(targetCollapse).hasClass("show")) {
@@ -131,9 +172,4 @@
             });
         });
     </script>
-    
-    
-    
-    
-    
 {% endblock content %}

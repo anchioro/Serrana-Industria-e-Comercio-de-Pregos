@@ -64,12 +64,14 @@
                         </a>
                     </li>
 
-                    <li>
-                        <a href="{% url "users:index" %}" class="nav-link link-dark">
-                            <i class="bi bi-people"></i>
-                            Usuários
-                        </a>
-                    </li>
+                    {% if request.user.is_staff %}
+                        <li>
+                            <a href="{% url "users:index" %}" class="nav-link link-dark">
+                                <i class="bi bi-people"></i>
+                                Usuários
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
 
                 <ul class="nav nav-pills flex-column">
@@ -166,12 +168,14 @@
                             </a>
                         </li>
 
-                        <li>
-                            <a href="{% url "users:index" %}" class="nav-link link-dark">
-                                <i class="bi bi-people"></i>
-                                Usuários
-                            </a>
-                        </li>
+                        {% if request.user.is_staff %}
+                            <li>
+                                <a href="{% url "users:index" %}" class="nav-link link-dark">
+                                    <i class="bi bi-people"></i>
+                                    Usuários
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
 
                     <ul class="nav nav-pills flex-column">
